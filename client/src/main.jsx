@@ -1,10 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+import { Suspense } from "react";
+import ReactDOM from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+import { Spin } from "antd";
+import "./index.css";
+import router from "./router";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <Suspense fallback={<Spin />}>
+    <RouterProvider router={router} />
+  </Suspense>
+);
