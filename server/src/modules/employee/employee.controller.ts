@@ -1,15 +1,16 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
   Patch,
   Param,
   Delete,
   Query,
 } from '@nestjs/common';
-import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { GetEmployeeParams } from './dto/getList-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { GetEmployeeParams } from './dto/getList_employee.dto';
 import { ValidationPipe } from '@nestjs/common';
