@@ -1,28 +1,14 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import ManageEmployee from './pages/ManageEmployee'
 
 function App() {
-  const [message, setMessage] = useState('')
 
-  useEffect(() => {
-    fetch("/server")
-      .then((res) => res.text())
-      .then(setMessage);
-  }, []);
 
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <ManageEmployee />
       </div>
-      <h1>{message}</h1>
     </>
   )
 }
