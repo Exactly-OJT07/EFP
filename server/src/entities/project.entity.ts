@@ -1,7 +1,8 @@
+/* eslint-disable prettier/prettier */
 import { AbstractEntity } from 'src/common/entities/abstract.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { EmployeeProject } from './employee_project.entity';
 import { StatusEnum } from 'src/common/enum/enums';
+import { EmployeeProject } from './employee_project';
 
 @Entity()
 export class Project extends AbstractEntity {
@@ -15,10 +16,10 @@ export class Project extends AbstractEntity {
   manager: string;
 
   @Column()
-  startDate: Date;
+  description: string;
 
-  @Column()
-  endDate: Date;
+  @Column({ nullable: true })
+  specification: string;
 
   @Column()
   langFrame: string;
@@ -29,15 +30,20 @@ export class Project extends AbstractEntity {
   @Column({ type: 'enum', enum: StatusEnum, default: StatusEnum.ACTIVE })
   status: StatusEnum;
 
-  @Column({ nullable: true })
-  specification: string;
+  @Column()
+  startDate: Date;
 
-  @Column({ nullable: true })
-  code: string;
+  @Column()
+  endDate: Date;
 
   @OneToMany(
     () => EmployeeProject,
     (employee_project) => employee_project.project,
   )
   employee_project: EmployeeProject[];
+
+  constructor(project: Partial<Project>){
+    super();
+    Object.assign(this, project);
+  }
 }

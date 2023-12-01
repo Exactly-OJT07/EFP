@@ -17,7 +17,7 @@ export abstract class AbstractEntity {
 
   @Column({ type: 'bigint', nullable: true })
   @Exclude()
-  createdBy: number;
+  createdBy: string;
 
   @UpdateDateColumn({
     type: 'timestamp',
@@ -29,7 +29,7 @@ export abstract class AbstractEntity {
 
   @Column({ type: 'bigint', nullable: true })
   @Exclude()
-  updatedBy: number;
+  updatedBy: string;
 
   @DeleteDateColumn({
     type: 'timestamp',
@@ -40,5 +40,5 @@ export abstract class AbstractEntity {
 
   @Column({ type: 'bigint', nullable: true })
   @Exclude()
-  deletedBy: number;
+  deletedBy: string;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { AbstractEntity } from 'src/common/entities/abstract.entity';
 import { GenderEnum, PositionEnum, StatusEnum } from 'src/common/enum/enums';
 import {
