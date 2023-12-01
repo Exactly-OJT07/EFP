@@ -28,9 +28,9 @@ export const LayoutSider = ({ collapsed = true }) => {
         label: 'Manage Projects',
         },
         {
-        key: "Option4",
+        key: "login",
         icon: <LogoutOutlined />,
-        label: 'Logout'
+        label: 'Login'
         },
     ];
 

@@ -2,6 +2,7 @@ import { PrivateLayout } from "../components/layout/MainLayout";
 import Dashboard from '../pages/Dashboard'
 import ManageProject from "../pages/ManageProject";
 import ManageEmployee from "../pages/ManageEmployee";
+
 const routes = [
     {
         element: <PrivateLayout />,

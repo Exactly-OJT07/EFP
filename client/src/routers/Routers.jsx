@@ -1,5 +1,6 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import privateRoute from "./PrivateRoute";
+import Login from "../pages/Login";
 
 const router = createBrowserRouter([
   {
@@ -7,6 +8,10 @@ const router = createBrowserRouter([
     element: <Outlet />,
     errorElement: <div>Not found</div>,
     children: [...privateRoute],
+  },
+  {
+    path: "/login", 
+    element: <Login/>,
   },
 ]);
 
