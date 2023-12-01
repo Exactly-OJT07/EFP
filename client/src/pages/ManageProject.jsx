@@ -344,6 +344,7 @@ const ManageProject = () => {
             onOk={handleCreateOk}
             confirmLoading={confirmLoading}
             onCancel={handleCreateCancel}
+            width="1000px"
             >
             <Form
                 form={formCreate}
@@ -351,15 +352,77 @@ const ManageProject = () => {
                 layout="vertical"
                 autoComplete="off"
             >
-                <Form.Item name="projectName" label="Project Name">
-                <Input />
-                </Form.Item>
-                <Form.Item name="personInCharge" label="Person In Charge">
-                <Input />
-                </Form.Item>
-                <Form.Item name="timeLine" label="Timeline">
-                <RangePicker style={{ width: "100%" }} />
-                </Form.Item>
+            <Row gutter={16}>
+                <Col xs={24} lg={12}>
+                    <Form form={formCreate} name="createProject" layout="vertical" autoComplete="off">
+                        <Form.Item
+                            name="Name"
+                            label="Name"
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="Manager"
+                            label="Manager"
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="StartDate"
+                            label="StartDate"
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="EndDate"
+                            label="EndDate"
+                        >
+                            <Input />
+                        </Form.Item>
+                    </Form>
+                </Col>
+                <Col xs={24} lg={12}>
+                    <Form form={formCreate} name="createProject" layout="vertical" autoComplete="off">
+                        <Form.Item
+                            name="Description"
+                            label="Description"
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="LangFrame"
+                            label="LangFrame"
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="Technology"
+                            label="Technology"
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="Specification"
+                            label="Specification"
+                        >
+                            <Input />
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
+                <Col xs={24} lg={24} >
+                    <Row justify="center">
+                    <Col xs={24} lg={12}>
+                        <Form.Item name="timeLine" label="Timeline">
+                        <RangePicker 
+                            style={{ 
+                            width: '100%',
+                            }} 
+                        />
+                        </Form.Item>
+                    </Col>
+                    </Row>
+                </Col>
             </Form>
             </Modal>
 
