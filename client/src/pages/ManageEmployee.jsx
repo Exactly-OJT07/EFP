@@ -92,9 +92,14 @@ function ManageEmployee() {
             menu={{
               items,
             }}
+            trigger={['click']}
             placement="bottomLeft"
           >
-            <Button><MoreOutlined/></Button>
+            <a onClick={(e) => e.preventDefault()}>
+              <Space>
+                <MoreOutlined/>
+              </Space>
+            </a>
           </Dropdown>
           )}
         />
