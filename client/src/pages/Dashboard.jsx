@@ -1,8 +1,9 @@
-import React from 'react'
-
 const Dashboard = () => {
+  console.log('Dashboard component rendered');
   return (
-    <div>Dashboard</div>
+    <div>
+      <h1>Dashboard Content</h1>
+    </div>
   )
 }
 

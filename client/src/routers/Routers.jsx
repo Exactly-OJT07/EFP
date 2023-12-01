@@ -1,9 +1,13 @@
-import React from 'react'
+import { createBrowserRouter, Outlet } from "react-router-dom";
+import privateRoute from "./PrivateRoute";
 
-const Routers = () => {
-  return (
-    <div>Routers</div>
-  )
-}
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Outlet />,
+    errorElement: <div>Not found</div>,
+    children: [...privateRoute],
+  },
+]);
 
-export default Routers
+export default router;
