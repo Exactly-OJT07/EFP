@@ -24,12 +24,37 @@ import {
     DatePicker,
     message,
     Layout,
+    Menu,
+    Popconfirm,
 } from "antd";
 import '../styles/ManageProject.css'
+import logoIcon from '../assets/image5.png'
 
 const { Content } = Layout;
 
 const { RangePicker } = DatePicker;
+
+const projects = [
+    {
+        id: 1,
+        projectNumber: "#P-000441425",
+        projectName: "Redesign Owlio Landing Page Web",
+        personInCharge: "Thành Phản Diện",
+        startDate: "Tuesday, Nov 29th 2023",
+        endDate: "Tuesday, Dec 16th 2023",
+        createdOn: "Nov 29th, 2023",
+    },
+    {
+        id: 2,
+        projectNumber: "#P-000112233",
+        projectName: "Exactly CocoonVietnam Website",
+        personInCharge: "Thành Phản Diện",
+        startDate: "Tuesday, Nov 22th 2023",
+        endDate: "Tuesday, Dev 17th 2024",
+        createdOn: "Dec 1st, 2023",
+    },
+    // Add more projects as needed
+  ];
 
 const handleMenuClick = (e) => {
     message.open({
@@ -39,6 +64,17 @@ const handleMenuClick = (e) => {
     });
     console.log("click", e);
 };
+
+const settings = [
+    {
+        label: 'View',
+        key: 'view',
+    },
+    {
+        label: 'Delete',
+        key: 'delete',
+    },
+];
 
 const items = [
     {
@@ -67,13 +103,18 @@ const items = [
 ];
 
 const ManageProject = () => {
-    const [selectedAction, setSelectedAction] = useState(null);
+    const [selectedActionCreate, setSelectedActionCreate] = useState(null);
+    const [selectedActionView, setSelectedActionView] = useState(null);
 
     const menuProps = {
         items,
         onClick: (item) => {
-        handleMenuClick(item);
-        setSelectedAction(item.key);
+            handleMenuClick(item);
+            if (createModalOpen) {
+                setSelectedActionCreate(item.key);
+            } else if (viewModalOpen) {
+                setSelectedActionView(item.key);
+            }
         },
     };
 
@@ -141,106 +182,159 @@ const ManageProject = () => {
             </Button>
             </Space>
             <Row gutter={10} style={{ marginTop: 10 }}>
-            <Col span={24}>
-                <Card>
-                <Space direction="horizontal">
-                    <small>#P-000441425</small>
-                </Space>
-                <div className="project-items">
-                    <h4>Redesign Owlio Landing Page Web</h4>
-                    <div className="project-owner">
-                    <img
-                        src={""}
-                        alt=""
-                        style={{ width: 50, height: 50, borderRadius: 100 }}
-                    />
-                    <div className="project-title">
-                        <Typography.Paragraph
-                        type="secondary"
-                        strong
-                        style={{ margin: 0 }}
-                        >
-                        Person in charge
-                        </Typography.Paragraph>
-                        <Typography.Text strong style={{ margin: 0 }}>
-                        Thành Phản Diện
-                        </Typography.Text>
-                    </div>
-                    </div>
-
-                    <div className="project-owner">
-                    <div
-                        style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                        width: 50,
-                        height: 50,
-                        background: "#1640D6",
-                        }}
-                    >
-                        <ScheduleOutlined style={{ color: "white" }} />
-                    </div>
-                    <div className="project-title">
-                        <Typography.Paragraph
-                        type="secondary"
-                        strong
-                        style={{ margin: 0 }}
-                        >
-                        Start Date
-                        </Typography.Paragraph>
-                        <Typography.Text strong style={{ margin: 0 }}>
-                        Tuesday, Nov 29th 2023
-                        </Typography.Text>
-                    </div>
-                    </div>
-
-                    <div className="project-owner">
-                    <div
-                        style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                        width: 50,
-                        height: 50,
-                        background: "#1640D6",
-                        }}
-                    >
-                        <ScheduleOutlined style={{ color: "white" }} />
-                    </div>
-                    <div className="project-title">
-                        <Typography.Paragraph
-                        type="secondary"
-                        strong
-                        style={{ margin: 0 }}
-                        >
-                        End Date
-                        </Typography.Paragraph>
-                        <Typography.Text strong style={{ margin: 0 }}>
-                        Tuesday, Nov 29th 2023
-                        </Typography.Text>
-                    </div>
-                    </div>
-                    <Space wrap>
-                    <Dropdown.Button menu={menuProps}>
-                        {selectedAction
-                        ? items.find((item) => item.key === selectedAction).label
-                        : "Pending"}
-                    </Dropdown.Button>
+                {projects.map((project) => (
+                <Col key={project.id} span={24}>
+                    <Card>
+                    <Space direction="horizontal">
+                        <small>{project.projectNumber}</small>
                     </Space>
+                    <div className="project-items">
+                        <h4>{project.projectName}</h4>
+                        <div className="project-owner">
+                        <img
+                            src={logoIcon}
+                            alt=""
+                            style={{ width: 50, height: 50, borderRadius: 100 }}
+                        />
+                        <div className="project-title">
+                            <Typography.Paragraph
+                            type="secondary"
+                            strong
+                            style={{ margin: 0 }}
+                            >
+                            Person in charge
+                            </Typography.Paragraph>
+                            <Typography.Text strong style={{ margin: 0 }}>
+                            {project.personInCharge}
+                            </Typography.Text>
+                        </div>
+                        </div>
 
-                    <MoreOutlined onClick={showViewModal} />
-                </div>
-                <Space direction="horizontal">
-                    <CalendarOutlined />
-                    <small>Created on Nov 29th, 2023</small>
-                </Space>
+                        <div className="project-owner">
+                        <div
+                            style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: "50%",
+                            width: 50,
+                            height: 50,
+                            background: "#1640D6",
+                            }}
+                        >
+                            <ScheduleOutlined style={{ color: "white" }} />
+                        </div>
+                        <div className="project-title">
+                            <Typography.Paragraph
+                            type="secondary"
+                            strong
+                            style={{ margin: 0 }}
+                            >
+                            Start Date
+                            </Typography.Paragraph>
+                            <Typography.Text strong style={{ margin: 0 }}>
+                            {project.startDate}
+                            </Typography.Text>
+                        </div>
+                        </div>
+
+                        <div className="project-owner">
+                        <div
+                            style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: "50%",
+                            width: 50,
+                            height: 50,
+                            background: "#1640D6",
+                            }}
+                        >
+                            <ScheduleOutlined style={{ color: "white" }} />
+                        </div>
+                        <div className="project-title">
+                            <Typography.Paragraph
+                            type="secondary"
+                            strong
+                            style={{ margin: 0 }}
+                            >
+                            End Date
+                            </Typography.Paragraph>
+                            <Typography.Text strong style={{ margin: 0 }}>
+                            {project.endDate}
+                            </Typography.Text>
+                        </div>
+                        </div>
+                        <Space wrap>
+                        <Dropdown.Button menu={menuProps}>
+                            {createModalOpen
+                                ? selectedActionCreate
+                                    ? items.find((item) => item.key === selectedActionCreate).label
+                                    : "Pending"
+                                : viewModalOpen
+                                    ? selectedActionView
+                                        ? items.find((item) => item.key === selectedActionView).label
+                                        : "Pending"
+                                    : "Pending"
+                            }
+                            </Dropdown.Button>
+                        </Space>
+
+                        <Space wrap>
+                        <Dropdown overlay={
+                            <Menu>
+                                {settings.map(item => {
+                                    if (item.type === 'divider') {
+                                        return <Menu.Divider key={item.key} />;
+                                    }
+                                    return (
+                                        <Menu.Item key={item.key}>
+                                            {item.key === 'delete' ? (
+                                                <Popconfirm
+                                                    title="Delete the task"
+                                                    description="Are you sure to delete this task?"
+                                                    onConfirm={() => {
+                                                        // Thực hiện xử lý khi người dùng nhấp vào nút "Yes" trong Popconfirm
+                                                        console.log('Deleting task...');
+                                                        // Gọi hàm để xử lý delete ở đây
+                                                    }}
+                                                    onCancel={() => {
+                                                        // Thực hiện xử lý khi người dùng nhấp vào nút "No" trong Popconfirm
+                                                        console.log('Cancelled deleting task.');
+                                                    }}
+                                                    okText="Yes"
+                                                    cancelText="No"
+                                                >
+                                                    <a onClick={(e) => e.preventDefault()}>{item.label}</a>
+                                                </Popconfirm>
+                                            ) : (
+                                                <a onClick={() => {
+                                                    if (item.key === 'view') {
+                                                        showViewModal();
+                                                    }
+                                                }}>{item.label}</a>
+                                            )}
+                                        </Menu.Item>
+                                    );
+                                })}
+                            </Menu>
+                        } trigger={['click']} placement="bottomLeft">
+                            <a onClick={(e) => e.preventDefault()}>
+                                <Space>
+                                    <MoreOutlined />
+                                </Space>
+                            </a>
+                        </Dropdown>
+                        </Space>
+                    </div>
+                    <Space direction="horizontal">
+                        <CalendarOutlined />
+                        <small>{project.createdOn}</small>
+                    </Space>
                 </Card>
+                <Divider/>
             </Col>
-
-            <Divider />
+                ))}
             </Row>
 
             {/* Create Modal */}
