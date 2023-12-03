@@ -6,40 +6,45 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { GetEmployeeParams } from './dto/getList_employee.dto';
 
 @Controller('employee')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Post()
-  create(@Body() createEmployeeDto: CreateEmployeeDto) {
-    return this.employeeService.create(createEmployeeDto);
-  }
+  async create(@Body() createEmployeeDto: CreateEmployeeDto) {
+  const result = await this.employeeService.create(createEmployeeDto);
+  return { result, message: 'Successfully create new employee' };
+}
+
 
   @Get()
-  findAll() {
-    return this.employeeService.findAll();
+  findAll(@Query() params: GetEmployeeParams) {
+    return this.employeeService.getEmployees(params);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.employeeService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return this.employeeService.findOne( id );
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    return this.employeeService.update(+id, updateEmployeeDto);
+    const result = await this.employeeService.update( id, updateEmployeeDto);
+    return { result, message: 'Successfully update employee' };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.employeeService.remove(+id);
+  async remove(@Param('id') id: string) {
+    await this.employeeService.remove(id);
   }
 }
