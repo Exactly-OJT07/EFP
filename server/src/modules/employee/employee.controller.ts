@@ -24,6 +24,7 @@ export class EmployeeController {
 
   @Get()
   findAll(@Query() params: GetEmployeeParams) {
+    console.log(params);
     return this.employeeService.getEmployees(params);
   }
 
