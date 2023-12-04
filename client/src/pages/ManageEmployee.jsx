@@ -1,13 +1,79 @@
 import { MoreOutlined, EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { Space, Table, Tag, Dropdown, Button, Input } from 'antd';
 import '../styles/ManageEmployee.css'
-const { Column } = Table;
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+    render: (text) => <a>{text}</a>,
+  },
+  {
+    title: 'Age',
+    dataIndex: 'age',
+    key: 'age',
+  },
+  {
+    title: "Phone Number",
+    dataIndex: "phone",
+    key: "phone",
+  },
+  {
+    title: 'Roles',
+    key: 'roles',
+    dataIndex: 'roles',
+    render: (_,{ roles }) => (
+      <>
+        {roles.map((role) => {
+          let color = 'geekblue';
+          if (role === 'Intern') {
+            color = 'green';
+          }
+          if (role === 'BA') {
+            color = 'volcano';
+          }
+          return (
+            <Tag color={color} key={role}>
+              {role.toUpperCase()}
+            </Tag>
+          );
+        })}
+      </>
+    ),
+  },
+  {
+    title: "Hire Date",
+    dataIndex: "hireDate",
+    key: "hireDate",
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    render: () => (
+      <>
+        <Dropdown
+          menu={{
+            items,
+          }}
+          trigger={['click']}
+          placement="bottomLeft"
+        >
+          <a onClick={(e) => e.preventDefault()}>
+            <Space>
+              <MoreOutlined/>
+            </Space>
+          </a>
+        </Dropdown>
+      </>
+    ),
+  },
+];
+const EmployeeList = () => <Table columns={columns} dataSource={data} pagination={{ defaultPageSize: 5 }} />;
 const { Search } = Input;
 const data = [
   {
     key: '1',
-    firstName: 'John',
-    lastName: 'Brown',
+    name: 'John Brown',
     age: 32,
     phone: '0987654321',
     roles: ['Intern', 'Developer'],
@@ -15,8 +81,7 @@ const data = [
   },
   {
     key: '2',
-    firstName: 'Jim',
-    lastName: 'Green',
+    name: 'Jim Green',
     age: 42,
     phone: '0987654321',
     roles: ['Tester'],
@@ -24,8 +89,79 @@ const data = [
   },
   {
     key: '3',
-    firstName: 'Joe',
-    lastName: 'Black',
+    name: 'Joe Black',
+    age: 32,
+    phone: '0987654321',
+    roles: ['Middle', 'BA'],
+    hireDate: '23/10/2023',
+  },
+  {
+    key: '4',
+    name: 'John Brown',
+    age: 32,
+    phone: '0987654321',
+    roles: ['Intern', 'Developer'],
+    hireDate: '23/10/2023',
+  },
+  {
+    key: '5',
+    name: 'Jim Green',
+    age: 42,
+    phone: '0987654321',
+    roles: ['Tester'],
+    hireDate: '23/10/2023',
+  },
+  {
+    key: '6',
+    name: 'Joe Black',
+    age: 32,
+    phone: '0987654321',
+    roles: ['Middle', 'BA'],
+    hireDate: '23/10/2023',
+  },
+  {
+    key: '7',
+    name: 'John Brown',
+    age: 32,
+    phone: '0987654321',
+    roles: ['Intern', 'Developer'],
+    hireDate: '23/10/2023',
+  },
+  {
+    key: '8',
+    name: 'Jim Green',
+    age: 42,
+    phone: '0987654321',
+    roles: ['Tester'],
+    hireDate: '23/10/2023',
+  },
+  {
+    key: '9',
+    name: 'Joe Black',
+    age: 32,
+    phone: '0987654321',
+    roles: ['Middle', 'BA'],
+    hireDate: '23/10/2023',
+  },
+  {
+    key: '10',
+    name: 'John Brown',
+    age: 32,
+    phone: '0987654321',
+    roles: ['Intern', 'Developer'],
+    hireDate: '23/10/2023',
+  },
+  {
+    key: '11',
+    name: 'Jim Green',
+    age: 42,
+    phone: '0987654321',
+    roles: ['Tester'],
+    hireDate: '23/10/2023',
+  },
+  {
+    key: '12',
+    name: 'Joe Black',
     age: 32,
     phone: '0987654321',
     roles: ['Middle', 'BA'],
@@ -64,46 +200,7 @@ function ManageEmployee() {
         </div>
       <Button type="primary"><PlusOutlined/>Add Employee</Button>
       </Space>
-      <Table dataSource={data}>
-        <Column title="First Name" dataIndex="firstName" key="firstName" />
-        <Column title="Last Name" dataIndex="lastName" key="lastName" />
-        <Column title="Age" dataIndex="age" key="age" />
-        <Column title="Phone Number" dataIndex="phone" key="phone" />
-        <Column
-          title="Roles"
-          dataIndex="roles"
-          key="roles"
-          render={(roles) => (
-            <>
-              {roles.map((role) => (
-                <Tag color="green" key={role}>
-                  {role}
-                </Tag>
-              ))}
-            </>
-          )}
-        />
-        <Column title="Hire date" dataIndex="hireDate" key="hireDate"/>
-        <Column
-          title="Action"
-          key="action"
-          render={() => (
-          <Dropdown
-            menu={{
-              items,
-            }}
-            trigger={['click']}
-            placement="bottomLeft"
-          >
-            <a onClick={(e) => e.preventDefault()}>
-              <Space>
-                <MoreOutlined/>
-              </Space>
-            </a>
-          </Dropdown>
-          )}
-        />
-      </Table>
+      <EmployeeList/>
     </>
   )
 }
