@@ -17,13 +17,13 @@ import { GetProjectParams } from './dto/getList-project.dto';
 @Controller('project')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
-  
+
   // @UseGuards(AuthGuard)
   @Post()
   async create(@Body() createProjectDto: CreateProjectDto) {
     return this.projectService.create(createProjectDto);
   }
-  
+
   @Get()
   findAll(@Query() params: GetProjectParams) {
     return this.projectService.getProjects(params);

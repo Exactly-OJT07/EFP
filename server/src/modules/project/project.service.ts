@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -16,9 +15,9 @@ export class ProjectService {
     @InjectRepository(Project)
     private projectRespository: Repository<Project>,
     private readonly entityManager: EntityManager,
-    ) {}
-    
-  async create( createProjectDto: CreateProjectDto) {
+  ) {}
+
+  async create(createProjectDto: CreateProjectDto) {
     const project = new Project(createProjectDto);
     await this.entityManager.save(project);
   }
@@ -53,12 +52,13 @@ export class ProjectService {
   async findOne(id: string) {
     return this.projectRespository.findOneBy({ id });
   }
-  
+
   async update(id: string, updateProjectDto: UpdateProjectDto) {
     const project = await this.projectRespository.findOneBy({ id });
     project.name = updateProjectDto.name;
     project.manager = updateProjectDto.manager;
     project.description = updateProjectDto.description;
+    project.specification = updateProjectDto.specification;
     project.status = updateProjectDto.status;
     project.langFrame = updateProjectDto.langFrame;
     project.technology = updateProjectDto.technology;
