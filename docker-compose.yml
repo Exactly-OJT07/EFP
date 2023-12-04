@@ -1,0 +1,15 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:15-alpine
+    volumes:
+      - postgresqldata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=ojt07
+    restart: unless-stopped
+
+volumes:
+  postgresqldata:
