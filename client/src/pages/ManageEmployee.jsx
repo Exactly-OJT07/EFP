@@ -1,5 +1,5 @@
 import { MoreOutlined, EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons'
-import { Space, Table, Tag, Dropdown, Button, Input } from 'antd';
+import { Space, Table, Tag, Dropdown, Button, Input, Popconfirm } from 'antd';
 import '../styles/ManageEmployee.css'
 const columns = [
   {
@@ -178,11 +178,21 @@ const items = [
   {
     key: '2',
     label: (
-      <p><DeleteOutlined/>Delete</p>
+      <Popconfirm
+    title="Delete the user"
+    description="Are you sure to delete this user?"
+    okText="Yes"
+    cancelText="No"
+  >
+    <p><DeleteOutlined/>Delete</p>
+  </Popconfirm>
     ),
     danger: true,
   },
 ];
+
+
+
 
 
 function ManageEmployee() {
