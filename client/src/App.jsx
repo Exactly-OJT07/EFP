@@ -7,7 +7,7 @@ function App() {
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    fetch("/server")
+    fetch("/")
       .then((res) => res.text())
       .then(setMessage);
   }, []);
