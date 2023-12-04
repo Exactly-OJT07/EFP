@@ -2,6 +2,7 @@ import { PrivateLayout } from "../components/layout/MainLayout";
 import Dashboard from '../pages/Dashboard'
 import ManageProject from "../pages/ManageProject";
 import ManageEmployee from "../pages/ManageEmployee";
+import ProjectDetail from "../pages/ProjectDetail";
 
 const routes = [
     {
@@ -9,33 +10,37 @@ const routes = [
         children: [
         {
             path: "",
-            element: <div>home</div>,
+            element: <Dashboard/>,
         },
         {
-            path: "option1",
+            path: "Dashboard",
             children: [
             { path: "", element: <Dashboard/> },
-            // {
-            //   path: 'create',
-            //   element: < />,
-            // },
-            // {
-            //   path: 'update/:id',
-            //   element: < />,
-            // },
-            // {
-            //   path: ':id',
-            //   element: < />,
-            // },
-            ],
+                // {
+                // path: 'create',
+                // element: <div>ád</div>,
+                // },
+                // {
+                //   path: 'update/:id',
+                //   element: < />,
+                // },
+                // {
+                //   path: ':id',
+                //   element: < />,
+                // },
+                ],
         },
         {
-            path: "option2",
+            path: "manageUsers",
             element: <ManageEmployee/>,
         },
         {
-            path: "option3",
+            path: "manageProjects",
             element: <ManageProject/>,
+            children: [
+                { path: "projectDetail/:id", 
+                element: <ProjectDetail /> },
+            ]
         },
         {
             path: "404",

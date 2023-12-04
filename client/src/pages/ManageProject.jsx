@@ -26,11 +26,14 @@ import {
     Layout,
     Menu,
     Popconfirm,
+    Pagination,
 } from "antd";
 import '../styles/ManageProject.css'
 import logoIcon from '../assets/image5.png'
+import { useNavigate } from 'react-router-dom';
 
 const { Content } = Layout;
+const { Search } = Input;
 
 const { RangePicker } = DatePicker;
 
@@ -41,20 +44,56 @@ const projects = [
         projectName: "Redesign Owlio Landing Page Web",
         personInCharge: "Thành Phản Diện",
         startDate: "Tuesday, Nov 29th 2023",
-        endDate: "Tuesday, Dec 16th 2023",
+        endDate: "Sunday, Dec 16th 2023",
         createdOn: "Nov 29th, 2023",
     },
     {
         id: 2,
         projectNumber: "#P-000112233",
         projectName: "Exactly CocoonVietnam Website",
-        personInCharge: "Thành Phản Diện",
-        startDate: "Tuesday, Nov 22th 2023",
+        personInCharge: "Lê Sỹ Thành Đây",
+        startDate: "Monday, Nov 22th 2023",
         endDate: "Tuesday, Dev 17th 2024",
         createdOn: "Dec 1st, 2023",
     },
+    {
+        id: 3,
+        projectNumber: "#P-000112233",
+        projectName: "Human Computer Interaction App",
+        personInCharge: "Không Phải Thành",
+        startDate: "Monday, Nov 22th 2023",
+        endDate: "Tuesday, Dev 17th 2024",
+        createdOn: "Dec 1st, 2023",
+    },
+    {
+        id: 4,
+        projectNumber: "#P-000112233",
+        projectName: "Requirements Management",
+        personInCharge: "Thành Xỉn Bia",
+        startDate: "Monday, Nov 22th 2023",
+        endDate: "Tuesday, Dev 17th 2024",
+        createdOn: "Dec 1st, 2023",
+    },
+    {
+        id: 5,
+        projectNumber: "#P-000112233",
+        projectName: "DevPlus Final Project Exercise",
+        personInCharge: "Thành Thỏ Hồng",
+        startDate: "Monday, Nov 22th 2023",
+        endDate: "Tuesday, Dev 17th 2024",
+        createdOn: "Dec 1st, 2023",
+    },
+    // {
+    //     id: 6,
+    //     projectNumber: "#P-000112233",
+    //     projectName: "Exactly CocoonVietnam Website",
+    //     personInCharge: "Thành Hitler",
+    //     startDate: "Monday, Nov 22th 2023",
+    //     endDate: "Tuesday, Dev 17th 2024",
+    //     createdOn: "Dec 1st, 2023",
+    // },
     // Add more projects as needed
-  ];
+];
 
 const handleMenuClick = (e) => {
     message.open({
@@ -104,22 +143,18 @@ const items = [
 
 const ManageProject = () => {
     const [selectedActionCreate, setSelectedActionCreate] = useState(null);
-    const [selectedActionView, setSelectedActionView] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate()
 
     const menuProps = {
         items,
         onClick: (item) => {
             handleMenuClick(item);
-            if (createModalOpen) {
-                setSelectedActionCreate(item.key);
-            } else if (viewModalOpen) {
-                setSelectedActionView(item.key);
-            }
+            setSelectedActionCreate(item.key);
         },
     };
 
     const [createModalOpen, setCreateModalOpen] = useState(false);
-    const [viewModalOpen, setViewModalOpen] = useState(false);
 
     const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -144,29 +179,28 @@ const ManageProject = () => {
         setCreateModalOpen(false);
     };
 
-    const showViewModal = () => {
-        setViewModalOpen(true);
+
+    const handleSearch = (value) => {
+        setCurrentPage(1);
+        setSearchQuery(value);
     };
 
-    const handleViewOk = () => {
-        // Placeholder function for handling view modal OK
-        console.log("View OK");
-        setConfirmLoading(true);
-
-        setTimeout(() => {
-        setViewModalOpen(false);
-        setConfirmLoading(false);
-        }, 2000);
-    };
-
-    const handleViewCancel = () => {
-        // Placeholder function for handling view modal cancel
-        console.log("View Cancel");
-        setViewModalOpen(false);
-    };
+    const filteredProjects = projects.filter((project) =>
+        project.projectName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const [formCreate] = Form.useForm();
-    const [formView] = Form.useForm();
+
+
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const indexOfLastItem = currentPage * 3;
+    const indexOfFirstItem = indexOfLastItem - 3;
+    const currentProjects = filteredProjects.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
         <Content className="content">
@@ -177,12 +211,21 @@ const ManageProject = () => {
                 <Button type="secondary">Pending</Button>
                 <Button type="secondary">Done</Button>
             </div>
+            <Search
+                placeholder="Search Project"
+                allowClear
+                style={{
+                width: 300,
+                }}
+                onSearch={handleSearch}
+            />
             <Button type="primary" onClick={showCreateModal}>
                 <PlusOutlined /> New Project
             </Button>
             </Space>
+            {currentProjects.length > 0 ? (
             <Row gutter={10} style={{ marginTop: 10 }}>
-                {projects.map((project) => (
+                {currentProjects.map((project) => (
                 <Col key={project.id} span={24}>
                     <Card>
                     <Space direction="horizontal">
@@ -266,18 +309,14 @@ const ManageProject = () => {
                         </div>
                         </div>
                         <Space wrap>
-                        <Dropdown.Button menu={menuProps}>
-                            {createModalOpen
-                                ? selectedActionCreate
-                                    ? items.find((item) => item.key === selectedActionCreate).label
-                                    : "Pending"
-                                : viewModalOpen
-                                    ? selectedActionView
-                                        ? items.find((item) => item.key === selectedActionView).label
+                            <Dropdown.Button menu={menuProps}>
+                                    {createModalOpen
+                                        ? selectedActionCreate
+                                            ? items.find((item) => item.key === selectedActionCreate).label
+                                            : "Pending"
                                         : "Pending"
-                                    : "Pending"
-                            }
-                            </Dropdown.Button>
+                                    }
+                                </Dropdown.Button>
                         </Space>
 
                         <Space wrap>
@@ -310,7 +349,8 @@ const ManageProject = () => {
                                             ) : (
                                                 <a onClick={() => {
                                                     if (item.key === 'view') {
-                                                        showViewModal();
+                                                        console.log('Navigating to projectDetail:', `/manageProjects/projectDetail/${project.id}`);
+                                                        navigate(`/manageProjects/projectDetail/${project.id}`)
                                                     }
                                                 }}>{item.label}</a>
                                             )}
@@ -336,6 +376,11 @@ const ManageProject = () => {
             </Col>
                 ))}
             </Row>
+            ) : (
+                <div style={{ textAlign: 'center', marginTop: 20 }}>
+                    <Typography.Title level={5}>No matching projects found</Typography.Title>
+                </div>
+            )}
 
             {/* Create Modal */}
             <Modal
@@ -363,25 +408,14 @@ const ManageProject = () => {
             </Form>
             </Modal>
 
-            {/* Update Modal */}
-            <Modal
-            title="Project Details"
-            open={viewModalOpen}
-            onOk={handleViewOk}
-            confirmLoading={confirmLoading}
-            onCancel={handleViewCancel}
-            >
-            <Form
-                form={formView}
-                name="viewProject"
-                layout="vertical"
-                autoComplete="off"
-            >
-                <Form.Item name="timeLine" label="Timeline">
-                <RangePicker style={{ width: "100%" }} />
-                </Form.Item>
-            </Form>
-            </Modal>
+
+            <Pagination
+                current={currentPage}
+                pageSize={3}
+                total={projects.length}
+                onChange={handlePageChange}
+                style={{ marginTop: 10, textAlign: 'center', display: 'flex', justifyContent: 'flex-end' }}
+            />
         </Content>
     );
 };

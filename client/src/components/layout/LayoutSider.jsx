@@ -13,17 +13,17 @@ export const LayoutSider = ({ collapsed = true }) => {
 
     const menu = [
         {
-        key: "Option1",
+        key: "dashboard",
         icon: <DashboardOutlined />,
         label: 'Dashboard',
         },
         {
-        key: "Option2",
+        key: "manageUsers",
         icon: <UserOutlined />,
         label: 'Manage Users',
         },
         {
-        key: "Option3",
+        key: "manageProjects",
         icon: <ThunderboltOutlined />,
         label: 'Manage Projects',
         },
