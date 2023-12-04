@@ -1,6 +1,9 @@
 /* eslint-disable prettier/prettier */
 // eslint-disable-next-line prettier/prettier
 import { GenderEnum, PositionEnum, StatusEnum } from 'src/common/enum/enums';
+/* eslint-disable prettier/prettier */
+// eslint-disable-next-line prettier/prettier
+import { GenderEnum, PositionEnum, StatusEnum } from 'src/common/enum/enums';
 import { AbstractEntity } from 'src/common/entities/abstract.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EmployeeProject } from './employee_project.entity';
