@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Form, Input, Alert } from 'antd';
 import '../styles/Login.css';
 import { useNavigate } from 'react-router-dom';
+import { openNotificationWithIcon } from '../components/notification/notification';
 const Login = () => {
   const navigate = useNavigate()
   const [showAlert, setShowAlert] = useState(false);
@@ -27,10 +28,11 @@ const Login = () => {
       };
   
       localStorage.setItem('username', JSON.stringify(updatedCredentials.username));
-  
+      
+      openNotificationWithIcon('success', 'Login Successfully');
       navigate('/dashboard');
     } else {
-      alert('Login failed');
+      openNotificationWithIcon('error', 'Login Fail');
     }
   };
   

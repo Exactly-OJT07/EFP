@@ -1,12 +1,9 @@
-import { Layout } from "antd"
-
-
 const ProjectDetail = () => {
-  const { Content } = Layout;
-  return (
-    <Content>
 
-    </Content>
+  return (
+   <div>
+      Project Detail
+   </div>
   )
 }
 

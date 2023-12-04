@@ -5,7 +5,7 @@ import {
     WarningFilled,
 } from "@ant-design/icons";
 import { notification } from "antd";
-import { NotificationType } from "../../constants/constants";
+import { NotificationType } from "../constants/constants";
 import "./notification.css";
 
 export const openNotificationWithIcon = (type, description) => {
