@@ -1,5 +1,5 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import privateRoute from "./routers/PrivateRoute";
+import privateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {

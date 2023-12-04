@@ -16,4 +16,15 @@ import { EmployeeProject } from 'src/entities/employee_project.entity';
   controllers: [EmployeeController],
   providers: [EmployeeService],
 })
-export class EmployeeModule {}
+export class EmployeeModule {
+  static forFeature(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    arg0: (typeof import('../../entities/project.entity').Project)[],
+  ):
+    | import('@nestjs/common').Type<any>
+    | import('@nestjs/common').DynamicModule
+    | Promise<import('@nestjs/common').DynamicModule>
+    | import('@nestjs/common').ForwardReference<any> {
+    throw new Error('Method not implemented.');
+  }
+}

@@ -1,13 +1,16 @@
 /* eslint-disable prettier/prettier */
 import { AbstractEntity } from 'src/common/entities/abstract.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { StatusEnum } from 'src/common/enum/enums';
+import { StatusProjectEnum } from 'src/common/enum/enums';
 import { EmployeeProject } from './employee_project';
 
 @Entity()
-export class Project extends AbstractEntity {
+export class Project extends AbstractEntity{
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column('json', { nullable: true })
+  metadata: Record<string, unknown>;
 
   @Column()
   name: string;
@@ -27,8 +30,8 @@ export class Project extends AbstractEntity {
   @Column()
   technology: string;
 
-  @Column({ type: 'enum', enum: StatusEnum, default: StatusEnum.ACTIVE })
-  status: StatusEnum;
+  @Column({ type: 'enum', enum: StatusProjectEnum, default: StatusProjectEnum.PENDING })
+  status: StatusProjectEnum;
 
   @Column()
   startDate: Date;
