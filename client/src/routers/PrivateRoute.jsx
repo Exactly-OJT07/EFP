@@ -1,4 +1,7 @@
-import { PrivateLayout } from "../components/layout/Layout";
+import { PrivateLayout } from "../components/layout/MainLayout";
+import Dashboard from "../pages/Dashboard";
+import ManageProject from "../pages/ManageProject";
+import ManageEmployee from "../pages/ManageEmployee";
 
 const routes = [
   {
@@ -11,7 +14,7 @@ const routes = [
       {
         path: "option1",
         children: [
-          { path: "", element: <div>option children</div> },
+          { path: "", element: <Dashboard /> },
           // {
           //   path: 'create',
           //   element: < />,
@@ -28,7 +31,11 @@ const routes = [
       },
       {
         path: "option2",
-        element: <div>option 2 children</div>,
+        element: <ManageEmployee />,
+      },
+      {
+        path: "option3",
+        element: <ManageProject />,
       },
       {
         path: "404",
