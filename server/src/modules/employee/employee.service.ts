@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EntityManager, Repository } from 'typeorm';
@@ -14,16 +13,15 @@ import { EmployeeProject } from 'src/entities/employee_project.entity';
 
 @Injectable()
 export class EmployeeService {
-  constructor (
+  constructor(
     @InjectRepository(Employee)
     private readonly employeesRepository: Repository<Employee>,
     @InjectRepository(Project)
     private readonly projectsRepository: Repository<Project>,
     @InjectRepository(Project)
     private readonly assignsRepository: Repository<EmployeeProject>,
-    private readonly entityManager: EntityManager)
-    {
-  }
+    private readonly entityManager: EntityManager,
+  ) {}
   async create(createEmployeeDto: CreateEmployeeDto) {
     const employee = new Employee(createEmployeeDto);
     await this.entityManager.save(employee);
