@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Query,
-  Query,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
@@ -25,38 +24,27 @@ export class EmployeeController {
   ) {
     const result = await this.employeeService.create(createEmployeeDto);
     return { result, message: 'Successfully create new employee' };
-}
-
+  }
 
   @Get()
   findAll(@Query() params: GetEmployeeParams) {
     return this.employeeService.getEmployees(params);
-  findAll(@Query() params: GetEmployeeParams) {
-    return this.employeeService.getEmployees(params);
   }
-
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.employeeService.findOne( id );
-  async findOne(@Param('id') id: string) {
-    return this.employeeService.findOne( id );
+    return this.employeeService.findOne(id);
   }
 
   @Patch(':id')
   async update(
-  async update(
     @Param('id') id: string,
     @Body(new ValidationPipe()) updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    const result = await this.employeeService.update( id, updateEmployeeDto);
-    return { result, message: 'Successfully update employee' };
-    const result = await this.employeeService.update( id, updateEmployeeDto);
+    const result = await this.employeeService.update(id, updateEmployeeDto);
     return { result, message: 'Successfully update employee' };
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    await this.employeeService.remove(id);
   async remove(@Param('id') id: string) {
     await this.employeeService.remove(id);
   }

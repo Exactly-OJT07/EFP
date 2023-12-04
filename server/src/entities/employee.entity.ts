@@ -1,11 +1,13 @@
-/* eslint-disable prettier/prettier */
-// eslint-disable-next-line prettier/prettier
-import { GenderEnum, PositionEnum, StatusEnum } from 'src/common/enum/enums';
-/* eslint-disable prettier/prettier */
-// eslint-disable-next-line prettier/prettier
 import { GenderEnum, PositionEnum, StatusEnum } from 'src/common/enum/enums';
 import { AbstractEntity } from 'src/common/entities/abstract.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { EmployeeProject } from './employee_project.entity';
 
 @Entity()
@@ -37,28 +39,38 @@ export class Employee extends AbstractEntity {
   @Column({ type: 'enum', enum: GenderEnum, nullable: false })
   gender: GenderEnum;
 
-  @Column({ type: 'enum', enum: StatusEnum, default: StatusEnum.ACTIVE, nullable: false })
+  @Column({
+    type: 'enum',
+    enum: StatusEnum,
+    default: StatusEnum.ACTIVE,
+    nullable: false,
+  })
   status: StatusEnum;
 
-  @Column({ type: 'enum', enum: PositionEnum, default: PositionEnum.FULLSTACK, nullable: false })
+  @Column({
+    type: 'enum',
+    enum: PositionEnum,
+    default: PositionEnum.FULLSTACK,
+    nullable: false,
+  })
   position: PositionEnum;
 
   @Column({ default: false })
   isManager: boolean;
 
-  @Column({nullable: false})
-  langFrame : string;
+  @Column({ nullable: false })
+  langFrame: string;
 
-  @Column({nullable: false})
-  technology : string;
+  @Column({ nullable: false })
+  technology: string;
 
   @Column({ nullable: false })
   description: string;
 
-  @Column({nullable: false})
-  joinDate : Date;
+  @Column({ nullable: false })
+  joinDate: Date;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   fireDate: Date;
 
   @ManyToOne(() => Employee, { nullable: true })
@@ -75,7 +87,7 @@ export class Employee extends AbstractEntity {
   )
   employee_project: EmployeeProject[];
 
-  constructor(employee: Partial<Employee>){
+  constructor(employee: Partial<Employee>) {
     super();
     Object.assign(this, employee);
   }

@@ -7,7 +7,11 @@ import { Project } from 'src/entities/project.entity';
 import { EmployeeProject } from 'src/entities/employee_project.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Employee]),TypeOrmModule.forFeature([Project]),TypeOrmModule.forFeature([EmployeeProject])],
+  imports: [
+    TypeOrmModule.forFeature([Employee]),
+    TypeOrmModule.forFeature([Project]),
+    TypeOrmModule.forFeature([EmployeeProject]),
+  ],
   controllers: [EmployeeController],
   providers: [EmployeeService],
 })
