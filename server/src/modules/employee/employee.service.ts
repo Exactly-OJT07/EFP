@@ -30,9 +30,11 @@ export class EmployeeService {
     return employee;
   }
 
+
   async getEmployees(params: GetEmployeeParams) {
     const employees = this.employeesRepository
       .createQueryBuilder('employee')
+      .leftJoinAndSelect('employee.manager', 'manager')
       .skip(params.skip)
       .take(params.take)
       .orderBy('employee.createdAt', Order.DESC);
@@ -49,8 +51,13 @@ export class EmployeeService {
     return new ResponsePaginate(result, pageMetaDto, 'Success');
   }
 
-  async findOne(id: string) {
-    return this.employeesRepository.findOneBy({ id });
+  async getEmployeeById(id: string) {
+    const employee = await this.employeesRepository
+      .createQueryBuilder('employee')
+      .leftJoinAndSelect('employee.manager', 'manager')
+      .where('employee.id = :id', { id })
+      .getOne();
+    return employee;
   }
 
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
@@ -66,6 +73,7 @@ export class EmployeeService {
       employee.langFrame = updateEmployeeDto.langFrame;
       employee.avatar = updateEmployeeDto.avatar;
       employee.fireDate = updateEmployeeDto.fireDate;
+      employee.managerId = updateEmployeeDto.managerId;
       await this.entityManager.save(employee);
       return employee;
     }

@@ -35,4 +35,6 @@ export class UpdateEmployeeDto {
   avatar: string;
 
   fireDate: Date;
+
+  managerId: string;
 }

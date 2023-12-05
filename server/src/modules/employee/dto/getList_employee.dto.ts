@@ -21,6 +21,6 @@ export class GetEmployeeParams extends PageOptionsDto {
   joinDate: Date;
   fireDate: Date;
   manager: Employee;
-  managerId: number;
+  managerId: string;
   employee_project: EmployeeProject[];
 }

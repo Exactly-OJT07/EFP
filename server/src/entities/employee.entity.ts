@@ -78,7 +78,7 @@ export class Employee extends AbstractEntity {
   manager: Employee;
 
   @Column({ nullable: true })
-  managerId: number;
+  managerId: string;
 
   @OneToMany(
     () => EmployeeProject,
