@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { EmployeeProject } from './employee_project.entity';
+import { Project } from './project.entity';
 
 @Entity()
 export class Employee extends AbstractEntity {
@@ -85,6 +86,12 @@ export class Employee extends AbstractEntity {
     { cascade: true, onUpdate: 'CASCADE' },
   )
   employee_project: EmployeeProject[];
+
+  @OneToMany(() => Project, (project) => project.managerProject, {
+    cascade: true,
+    onUpdate: 'CASCADE',
+  })
+  project: Project[];
 
   constructor(employee: Partial<Employee>) {
     super();

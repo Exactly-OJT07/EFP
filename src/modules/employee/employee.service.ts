@@ -31,6 +31,8 @@ export class EmployeeService {
   async getEmployees(params: GetEmployeeParams) {
     const employees = this.employeesRepository
       .createQueryBuilder('employee')
+      .leftJoinAndSelect('employee.employee_project', 'employee_project')
+      .leftJoinAndSelect('employee_project.project', 'project')
       .skip(params.skip)
       .take(params.take)
       .orderBy('employee.createdAt', Order.DESC);
