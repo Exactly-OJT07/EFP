@@ -58,11 +58,8 @@ export class Employee extends AbstractEntity {
   @Column({ default: false })
   isManager: boolean;
 
-  @Column({ nullable: false })
-  langFrame: string;
-
-  @Column({ nullable: false })
-  technology: string;
+  @Column('json', { nullable: true })
+  skills: { name: string; exp: number }[];
 
   @Column({ nullable: false })
   description: string;
