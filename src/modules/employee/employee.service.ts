@@ -31,6 +31,14 @@ export class EmployeeService {
   async getEmployees(params: GetEmployeeParams) {
     const employees = this.employeesRepository
       .createQueryBuilder('employee')
+      .leftJoinAndSelect('employee.manager', 'manager')
+      .select([
+        'employee',
+        'manager.name',
+        'manager.code',
+        'manager.email',
+        'manager.phone',
+      ])
       .leftJoinAndSelect('employee.employee_project', 'employee_project')
       .leftJoinAndSelect('employee_project.project', 'project')
       .skip(params.skip)
@@ -62,8 +70,6 @@ export class EmployeeService {
       employee.position = updateEmployeeDto.position;
       employee.description = updateEmployeeDto.description;
       employee.status = updateEmployeeDto.status;
-      employee.technology = updateEmployeeDto.technology;
-      employee.langFrame = updateEmployeeDto.langFrame;
       employee.avatar = updateEmployeeDto.avatar;
       employee.fireDate = updateEmployeeDto.fireDate;
       await this.entityManager.save(employee);
