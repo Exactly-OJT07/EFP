@@ -1,6 +1,6 @@
 import { PageOptionsDto } from 'src/common/dtos/pageOption';
 import { GenderEnum, PositionEnum, StatusEnum } from 'src/common/enum/enums';
-import { Employee } from 'src/entities/employee.entity';
+// import { Employee } from 'src/entities/employee.entity';
 import { EmployeeProject } from 'src/entities/employee_project.entity';
 
 export class GetEmployeeParams extends PageOptionsDto {
@@ -12,7 +12,6 @@ export class GetEmployeeParams extends PageOptionsDto {
   identityCard: string;
   gender: GenderEnum;
   status: StatusEnum;
-  metadata: Record<string, unknown>;
   position: PositionEnum;
   langFrame: string;
   technology: string;
@@ -20,7 +19,5 @@ export class GetEmployeeParams extends PageOptionsDto {
   description: string;
   joinDate: Date;
   fireDate: Date;
-  manager: Employee;
-  managerId: number;
   employee_project: EmployeeProject[];
 }

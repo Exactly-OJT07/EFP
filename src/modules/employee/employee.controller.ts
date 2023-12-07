@@ -32,7 +32,7 @@ export class EmployeeController {
   }
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.employeeService.findOne(id);
+    return this.employeeService.getEmployeeById(id);
   }
 
   @Patch(':id')

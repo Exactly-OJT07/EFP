@@ -31,14 +31,22 @@ export class EmployeeService {
   async getEmployees(params: GetEmployeeParams) {
     const employees = this.employeesRepository
       .createQueryBuilder('employee')
+      .select([
+        'employee',
+        'manager.name',
+        'manager.code',
+        'manager.email',
+        'manager.phone',
+      ])
+      .leftJoin('employee.manager', 'manager')
       .leftJoinAndSelect('employee.employee_project', 'employee_project')
       .leftJoinAndSelect('employee_project.project', 'project')
       .skip(params.skip)
       .take(params.take)
       .orderBy('employee.createdAt', Order.DESC);
-    if (params.name) {
-      employees.andWhere('employee.name ILIKE :name', {
-        name: `%${params.name}%`,
+    if (params.search) {
+      employees.andWhere('project.name ILIKE :name', {
+        name: `%${params.search}%`,
       });
     }
     const [result, total] = await employees.getManyAndCount();
@@ -49,8 +57,22 @@ export class EmployeeService {
     return new ResponsePaginate(result, pageMetaDto, 'Success');
   }
 
-  async findOne(id: string) {
-    return this.employeesRepository.findOneBy({ id });
+  async getEmployeeById(id: string) {
+    const employee = await this.employeesRepository
+      .createQueryBuilder('employee')
+      .select([
+        'employee',
+        'manager.name',
+        'manager.code',
+        'manager.email',
+        'manager.phone',
+      ])
+      .leftJoin('employee.manager', 'manager')
+      .leftJoinAndSelect('employee.employee_project', 'employee_project')
+      .leftJoinAndSelect('employee_project.project', 'project')
+      .where('employee.id = :id', { id })
+      .getOne();
+    return employee;
   }
 
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
@@ -62,8 +84,6 @@ export class EmployeeService {
       employee.position = updateEmployeeDto.position;
       employee.description = updateEmployeeDto.description;
       employee.status = updateEmployeeDto.status;
-      employee.technology = updateEmployeeDto.technology;
-      employee.langFrame = updateEmployeeDto.langFrame;
       employee.avatar = updateEmployeeDto.avatar;
       employee.fireDate = updateEmployeeDto.fireDate;
       await this.entityManager.save(employee);
