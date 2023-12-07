@@ -56,9 +56,9 @@ export class ProjectService {
       .take(params.take)
       .orderBy('project.createdAt', Order.DESC);
 
-    if (params.name) {
+    if (params.search) {
       projects.andWhere('project.name ILIKE :name', {
-        name: `%${params.name}%`,
+        name: `%${params.search}%`,
       });
     }
     const [result, total] = await projects.getManyAndCount();
