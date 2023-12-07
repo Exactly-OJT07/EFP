@@ -33,9 +33,7 @@ export class CreateEmployeeDto {
 
   description: string;
 
-  langFrame: string;
-
-  technology: string;
+  skills: { name: string; exp: number }[];
 
   @IsNotEmpty()
   status: StatusEnum;
@@ -44,6 +42,8 @@ export class CreateEmployeeDto {
 
   @IsNotEmpty()
   joinDate: Date;
+
+  fireDate: Date | null;
 
   manager: Employee;
 
