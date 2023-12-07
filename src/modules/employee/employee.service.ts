@@ -44,9 +44,9 @@ export class EmployeeService {
       .skip(params.skip)
       .take(params.take)
       .orderBy('employee.createdAt', Order.DESC);
-    if (params.name) {
-      employees.andWhere('employee.name ILIKE :name', {
-        name: `%${params.name}%`,
+    if (params.search) {
+      employees.andWhere('project.name ILIKE :name', {
+        name: `%${params.search}%`,
       });
     }
     const [result, total] = await employees.getManyAndCount();
