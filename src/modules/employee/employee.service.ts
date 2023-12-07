@@ -45,7 +45,7 @@ export class EmployeeService {
       .take(params.take)
       .orderBy('employee.createdAt', Order.DESC);
     if (params.search) {
-      employees.andWhere('project.name ILIKE :name', {
+      employees.andWhere('employee.name ILIKE :name', {
         name: `%${params.search}%`,
       });
     }
