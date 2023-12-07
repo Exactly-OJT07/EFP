@@ -4,7 +4,6 @@ import { EmployeeProject } from 'src/entities/employee_project.entity';
 
 export class GetProjectParams extends PageOptionsDto {
   name: string;
-  manager: string;
   description: string;
   specification: string;
   langFrame: string;

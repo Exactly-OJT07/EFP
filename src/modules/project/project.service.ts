@@ -5,7 +5,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { Project } from '../../entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetProjectParams } from './dto/getList-project.dto';
-import { Order } from 'src/common/enum/enums';
+import { Order, StatusProjectEnum } from 'src/common/enum/enums';
 import { PageMetaDto } from 'src/common/dtos/pageMeta';
 import { ResponsePaginate } from 'src/common/dtos/responsePaginate';
 
@@ -28,6 +28,16 @@ export class ProjectService {
       .leftJoinAndSelect('project.managerProject', 'manager')
       .leftJoinAndSelect('project.employee_project', 'employee_project')
       .leftJoinAndSelect('employee_project.employee', 'employee')
+      .select(['project', 'manager.code', 'manager.name', 'manager.avatar'])
+      .andWhere('project.status = ANY(:status)', {
+        status: params.status
+          ? [params.status]
+          : [
+              StatusProjectEnum.DONE,
+              StatusProjectEnum.ON_PROGRESS,
+              StatusProjectEnum.PENDING,
+            ],
+      })
       .skip(params.skip)
       .take(params.take)
       .orderBy('project.createdAt', Order.DESC);
