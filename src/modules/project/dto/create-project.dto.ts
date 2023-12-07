@@ -6,7 +6,7 @@ export class CreateProjectDto {
   name: string;
 
   @IsNotEmpty()
-  manager: string;
+  managerId: string;
 
   @IsNotEmpty()
   description: string;

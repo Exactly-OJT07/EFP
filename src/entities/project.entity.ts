@@ -1,7 +1,15 @@
 import { AbstractEntity } from 'src/common/entities/abstract.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { EmployeeProject } from './employee_project';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { EmployeeProject } from './employee_project.entity';
 import { StatusProjectEnum } from 'src/common/enum/enums';
+import { Employee } from './employee.entity';
 
 @Entity()
 export class Project extends AbstractEntity {
@@ -12,7 +20,10 @@ export class Project extends AbstractEntity {
   name: string;
 
   @Column()
-  manager: string;
+  managerId: string;
+  @ManyToOne(() => Employee, (employee) => employee.project)
+  @JoinColumn({ name: 'managerId', referencedColumnName: 'id' })
+  managerProject: Employee;
 
   @Column()
   description: string;
