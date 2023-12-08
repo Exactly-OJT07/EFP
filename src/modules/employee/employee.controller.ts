@@ -30,6 +30,10 @@ export class EmployeeController {
   findAll(@Query() params: GetEmployeeParams) {
     return this.employeeService.getEmployees(params);
   }
+  @Get('managers') // New endpoint to get managers
+  async getManagers(@Query() params: GetEmployeeParams) {
+    return this.employeeService.getManagers(params);
+  }
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.employeeService.getEmployeeById(id);

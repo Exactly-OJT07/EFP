@@ -89,6 +89,8 @@ export class Employee extends AbstractEntity {
     onUpdate: 'CASCADE',
   })
   project: Project[];
+  @Column({ type: 'jsonb', nullable: true })
+  tracking: any;
 
   constructor(employee: Partial<Employee>) {
     super();
