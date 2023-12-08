@@ -90,6 +90,9 @@ export class Employee extends AbstractEntity {
   })
   project: Project[];
 
+  @Column({ type: 'jsonb', nullable: true })
+  tracking: any;
+
   constructor(employee: Partial<Employee>) {
     super();
     Object.assign(this, employee);

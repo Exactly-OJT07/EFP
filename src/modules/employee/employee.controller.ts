@@ -34,6 +34,10 @@ export class EmployeeController {
   async findOne(@Param('id') id: string) {
     return this.employeeService.getEmployeeById(id);
   }
+  @Get('managers')
+  async getManagers(@Query() params: GetEmployeeParams) {
+    return this.employeeService.getManagers(params);
+  }
 
   @Patch(':id')
   async update(
