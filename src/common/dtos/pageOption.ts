@@ -6,6 +6,12 @@ export class PageOptionsDto {
   @IsString()
   search?: string = '';
 
+  @IsString()
+  searchByName?: string = '';
+
+  @IsString()
+  searchByEmail?: string = '';
+
   @IsEnum(Order)
   @IsOptional()
   order?: Order = Order.DESC;

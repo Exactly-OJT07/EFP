@@ -44,9 +44,14 @@ export class EmployeeService {
       .skip(params.skip)
       .take(params.take)
       .orderBy('employee.createdAt', Order.DESC);
-    if (params.search) {
+    if (params.searchByName) {
       employees.andWhere('employee.name ILIKE :name', {
-        name: `%${params.search}%`,
+        name: `%${params.searchByName}%`,
+      });
+    }
+    if (params.searchByEmail) {
+      employees.andWhere('employee.email ILIKE :email', {
+        email: `%${params.searchByEmail}%`,
       });
     }
     const [result, total] = await employees.getManyAndCount();
@@ -55,6 +60,17 @@ export class EmployeeService {
       pageOptionsDto: params,
     });
     return new ResponsePaginate(result, pageMetaDto, 'Success');
+  }
+
+  async getManagers(params: GetEmployeeParams) {
+    const managers = this.employeesRepository
+      .createQueryBuilder('employee')
+      .where('employee.isManager = :isManager', { isManager: true }) // Add this line to filter by isManager
+      .skip(params.skip)
+      .take(params.take)
+      .orderBy('employee.createdAt', Order.DESC)
+      .getMany();
+    return managers;
   }
 
   async getEmployeeById(id: string) {
@@ -72,20 +88,41 @@ export class EmployeeService {
       .leftJoinAndSelect('employee_project.project', 'project')
       .where('employee.id = :id', { id })
       .getOne();
+    if (employee) {
+      const tracking = employee.employee_project.map(
+        (employeeProject: EmployeeProject) => ({
+          projectName: employeeProject.project.name,
+          projectStartDate: employeeProject.project.startDate,
+          joinDate: employeeProject.joinDate,
+          doneDate: employeeProject.fireDate,
+          projectEndDate: employeeProject.project.endDate,
+        }),
+      );
+      employee.tracking = {
+        joinDate: employee.joinDate,
+        projects: tracking,
+        fireDate: employee.fireDate,
+      };
+    }
     return employee;
   }
 
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
     const employee = await this.employeesRepository.findOneBy({ id });
     if (employee) {
+      employee.name = updateEmployeeDto.name;
       employee.email = updateEmployeeDto.email;
       employee.code = updateEmployeeDto.code;
       employee.phone = updateEmployeeDto.phone;
+      employee.gender = updateEmployeeDto.gender;
       employee.position = updateEmployeeDto.position;
       employee.description = updateEmployeeDto.description;
       employee.status = updateEmployeeDto.status;
+      employee.skills = updateEmployeeDto.skills;
       employee.avatar = updateEmployeeDto.avatar;
+      employee.joinDate = updateEmployeeDto.joinDate;
       employee.fireDate = updateEmployeeDto.fireDate;
+      employee.managerId = updateEmployeeDto.managerId;
       await this.entityManager.save(employee);
       return employee;
     }

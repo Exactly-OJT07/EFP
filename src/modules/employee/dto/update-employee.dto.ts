@@ -1,6 +1,9 @@
 import { IsNotEmpty } from 'class-validator';
-import { PositionEnum, StatusEnum } from 'src/common/enum/enums';
+import { GenderEnum, PositionEnum, StatusEnum } from 'src/common/enum/enums';
 export class UpdateEmployeeDto {
+  @IsNotEmpty()
+  name: string;
+
   @IsNotEmpty()
   code: string;
 
@@ -17,16 +20,15 @@ export class UpdateEmployeeDto {
   position: PositionEnum;
 
   @IsNotEmpty()
+  gender: GenderEnum;
+
+  @IsNotEmpty()
   isManager: boolean;
 
   @IsNotEmpty()
   description: string;
 
-  @IsNotEmpty()
-  langFrame: string;
-
-  @IsNotEmpty()
-  technology: string;
+  skills: { name: string; exp: number }[];
 
   @IsNotEmpty()
   status: StatusEnum;
@@ -34,5 +36,9 @@ export class UpdateEmployeeDto {
   @IsNotEmpty()
   avatar: string;
 
+  joinDate: Date;
+
   fireDate: Date;
+
+  managerId: number;
 }
