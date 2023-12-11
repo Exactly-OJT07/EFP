@@ -10,6 +10,7 @@ import { Order } from 'src/common/enum/enums';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { Project } from 'src/entities/project.entity';
 import { EmployeeProject } from 'src/entities/employee_project.entity';
+import { GetManagers } from './dto/getManager.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -25,7 +26,7 @@ export class EmployeeService {
   async create(createEmployeeDto: CreateEmployeeDto) {
     const employee = new Employee(createEmployeeDto);
     await this.entityManager.save(employee);
-    return employee;
+    return { employee, message: 'Successfully create employee' };
   }
 
   async getEmployees(params: GetEmployeeParams) {
@@ -59,18 +60,22 @@ export class EmployeeService {
       itemCount: total,
       pageOptionsDto: params,
     });
-    return new ResponsePaginate(result, pageMetaDto, 'Success');
+    return new ResponsePaginate(result, pageMetaDto, 'Successfully ');
   }
 
-  async getManagers(params: GetEmployeeParams) {
-    const managers = this.employeesRepository
-      .createQueryBuilder('employee')
-      .where('employee.isManager = :isManager', { isManager: true }) // Add this line to filter by isManager
-      .skip(params.skip)
-      .take(params.take)
-      .orderBy('employee.createdAt', Order.DESC)
-      .getMany();
-    return managers;
+  async getManagers(params: GetManagers) {
+    try {
+      const managers = await this.employeesRepository
+        .createQueryBuilder('employee')
+        .where('employee.isManager = :isManager', { isManager: true })
+        .skip(params.skip)
+        .take(params.take)
+        .getMany();
+      return managers;
+    } catch (error) {
+      console.error('Error in getManagers:', error);
+      throw error;
+    }
   }
 
   async getEmployeeById(id: string) {
@@ -124,7 +129,7 @@ export class EmployeeService {
       employee.fireDate = updateEmployeeDto.fireDate;
       employee.managerId = updateEmployeeDto.managerId;
       await this.entityManager.save(employee);
-      return employee;
+      return { employee, message: 'Successfully update employee' };
     }
   }
   async remove(id: string) {

@@ -6,8 +6,8 @@ export class GetProjectParams extends PageOptionsDto {
   name: string;
   description: string;
   specification: string;
-  langFrame: string;
-  technology: string;
+  langFrame: { name: string }[];
+  technology: { name: string }[];
   status: StatusProjectEnum;
   startDate: Date;
   endDate: Date;

@@ -14,11 +14,8 @@ export class CreateProjectDto {
   specification: string;
   status: StatusProjectEnum;
 
-  @IsNotEmpty()
-  langFrame: string;
-
-  @IsNotEmpty()
-  technology: string;
+  langFrame: { name: string }[];
+  technology: { name: string }[];
 
   @IsDate()
   startDate: Date;

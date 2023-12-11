@@ -20,6 +20,7 @@ export class ProjectService {
   async create(createProjectDto: CreateProjectDto) {
     const project = new Project(createProjectDto);
     await this.entityManager.save(project);
+    return { project, message: 'Successfully create projects' };
   }
 
   async getProjects(params: GetProjectParams) {
@@ -39,6 +40,7 @@ export class ProjectService {
         'employee.name',
         'employee.email',
         'employee.code',
+        'employee.avatar',
       ])
       .leftJoin('project.managerProject', 'manager')
       .leftJoin('project.employee_project', 'employee_project')
@@ -66,7 +68,7 @@ export class ProjectService {
       itemCount: total,
       pageOptionsDto: params,
     });
-    return new ResponsePaginate(result, pageMetaDto, 'Success');
+    return new ResponsePaginate(result, pageMetaDto, 'Successfully');
   }
 
   async getProjectById(id: string) {
@@ -92,6 +94,7 @@ export class ProjectService {
     project.startDate = updateProjectDto.startDate;
     project.endDate = updateProjectDto.endDate;
     await this.entityManager.save(project);
+    return { project, message: 'Successfully update project' };
   }
 
   async remove(id: string) {
