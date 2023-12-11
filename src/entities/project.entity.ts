@@ -31,11 +31,11 @@ export class Project extends AbstractEntity {
   @Column({ nullable: true })
   specification: string;
 
-  @Column()
-  langFrame: string;
+  @Column('json', { nullable: false })
+  langFrame: { name: string }[];
 
-  @Column()
-  technology: string;
+  @Column('json', { nullable: false })
+  technology: { name: string }[];
 
   @Column({
     type: 'enum',

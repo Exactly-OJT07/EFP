@@ -13,6 +13,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { GetEmployeeParams } from './dto/getList_employee.dto';
 import { ValidationPipe } from '@nestjs/common';
+import { GetManagers } from './dto/getManager.dto';
 
 @Controller('employee')
 export class EmployeeController {
@@ -30,13 +31,13 @@ export class EmployeeController {
   findAll(@Query() params: GetEmployeeParams) {
     return this.employeeService.getEmployees(params);
   }
+  @Get('managers')
+  async getManagers(@Query() params: GetManagers) {
+    return this.employeeService.getManagers(params);
+  }
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.employeeService.getEmployeeById(id);
-  }
-  @Get('managers')
-  async getManagers(@Query() params: GetEmployeeParams) {
-    return this.employeeService.getManagers(params);
   }
 
   @Patch(':id')
