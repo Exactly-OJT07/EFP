@@ -8,6 +8,7 @@ import { GetProjectParams } from './dto/getList-project.dto';
 import { Order, StatusProjectEnum } from 'src/common/enum/enums';
 import { PageMetaDto } from 'src/common/dtos/pageMeta';
 import { ResponsePaginate } from 'src/common/dtos/responsePaginate';
+import axios from 'axios';
 
 @Injectable()
 export class ProjectService {
@@ -52,6 +53,7 @@ export class ProjectService {
               StatusProjectEnum.DONE,
               StatusProjectEnum.ON_PROGRESS,
               StatusProjectEnum.PENDING,
+              StatusProjectEnum.CLOSED,
             ],
       })
       .skip(params.skip)
@@ -80,6 +82,45 @@ export class ProjectService {
       .where('project.id = :id', { id })
       .getOne();
     return employee;
+  }
+
+  async getUnassignedEmployeesInProject(id: string) {
+    const project = await this.projectRespository
+      .createQueryBuilder('project')
+      .leftJoinAndSelect('project.employee_project', 'employee_project')
+      .leftJoinAndSelect('employee_project.employee', 'employee')
+      .where('project.id = :id', { id })
+      .getOne();
+
+    // Lấy danh sách tất cả nhân viên
+    const allEmployees = await this.getAllEmployees();
+
+    // Lọc ra những nhân viên chưa được gán vào dự án
+    const unassignedEmployees = allEmployees.filter((employee) => {
+      return !project.employee_project.some(
+        (assignedEmployee) => assignedEmployee.employeeId === employee.id,
+      );
+    });
+
+    return unassignedEmployees;
+  }
+
+  // Phương thức để lấy danh sách tất cả nhân viên từ API
+  private async getAllEmployees(): Promise<any[]> {
+    try {
+      const response = await axios.get('http://localhost:3000/employee');
+      if (response.status === 200) {
+        // Nếu response thành công, trả về dữ liệu nhân viên từ endpoint
+        return response.data.data; // Giả sử dữ liệu nhân viên được trả về là một mảng có key 'data'
+      } else {
+        // Xử lý khi có lỗi trong quá trình gọi API
+        throw new Error('Lỗi khi lấy danh sách nhân viên');
+      }
+    } catch (error) {
+      // Xử lý khi có lỗi trong quá trình gọi API
+      console.error('Lỗi:', error.message);
+      throw new Error('Lỗi khi lấy danh sách nhân viên');
+    }
   }
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {

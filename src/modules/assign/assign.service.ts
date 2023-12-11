@@ -32,16 +32,15 @@ export class AssignService {
 
   async getAssigns(params: GetAssignParams) {
     const assigns = this.assignRespository
-      .createQueryBuilder('project')
-      // .leftJoinAndSelect('project.employee_project', 'id')
-      // .leftJoinAndSelect('project.employee_project', 'id')
-      // .leftJoinAndSelect('project.employee_project', 'projectId')
+      .createQueryBuilder('employee_project')
+      .select(['employee_project', 'employee'])
+      .leftJoin('employee_project.employee', 'employee')
       .skip(params.skip)
       .take(params.take)
-      .orderBy('project.createdAt', Order.DESC);
+      .orderBy('employee_project.createdAt', Order.DESC);
 
     if (params.id) {
-      assigns.andWhere('project.name ILIKE :name', {
+      assigns.andWhere('employee_project.name ILIKE :name', {
         name: `%${params.id}%`,
       });
     }
@@ -56,8 +55,14 @@ export class AssignService {
     return new ResponsePaginate(result, pageMetaDto, 'Success');
   }
 
-  async findOne(id: string) {
-    return this.assignRespository.findOneBy({ id });
+  async getAssignById(id: string) {
+    const assign = await this.assignRespository
+      .createQueryBuilder('employee_project')
+      .select(['employee_project', 'employee'])
+      .leftJoin('employee_project.employee', 'employee')
+      .where('employee_project.id = :id', { id })
+      .getOne();
+    return assign;
   }
 
   async update(id: string, updateProjectDto: UpdateAssignDto) {
