@@ -11,8 +11,8 @@ export enum StatusEnum {
 export enum StatusProjectEnum {
   PENDING = 'pending',
   DONE = 'done',
-  CLOSED = 'closed',
   ON_PROGRESS = 'on_progress',
+  CLOSED = 'closed',
 }
 
 export enum PositionEnum {
