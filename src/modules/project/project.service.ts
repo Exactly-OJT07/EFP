@@ -92,10 +92,8 @@ export class ProjectService {
       .where('project.id = :id', { id })
       .getOne();
 
-    // Lấy danh sách tất cả nhân viên
     const allEmployees = await this.getAllEmployees();
 
-    // Lọc ra những nhân viên chưa được gán vào dự án
     const unassignedEmployees = allEmployees.filter((employee) => {
       return !project.employee_project.some(
         (assignedEmployee) => assignedEmployee.employeeId === employee.id,
