@@ -29,7 +29,7 @@ export class AssignController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.assignService.findOne(id);
+    return this.assignService.getAssignById(id);
   }
 
   @Patch(':id')

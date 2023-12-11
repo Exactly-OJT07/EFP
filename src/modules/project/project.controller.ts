@@ -34,6 +34,11 @@ export class ProjectController {
     return this.projectService.getProjectById(id);
   }
 
+  @Get(':id/unassigned')
+  async findUnassignedEmployees(@Param('id') id: string) {
+    return this.projectService.getUnassignedEmployeesInProject(id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
     return this.projectService.update(id, updateProjectDto);

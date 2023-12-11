@@ -117,7 +117,6 @@ export class EmployeeService {
     if (employee) {
       employee.name = updateEmployeeDto.name;
       employee.email = updateEmployeeDto.email;
-      employee.code = updateEmployeeDto.code;
       employee.phone = updateEmployeeDto.phone;
       employee.gender = updateEmployeeDto.gender;
       employee.position = updateEmployeeDto.position;
