@@ -122,5 +122,6 @@ export class ProjectService {
 
   async remove(id: string) {
     await this.projectRespository.softDelete(id);
+    return { message: 'Project deletion successful' };
   }
 }

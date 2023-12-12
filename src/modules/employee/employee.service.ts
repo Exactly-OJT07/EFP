@@ -143,6 +143,7 @@ export class EmployeeService {
     }
   }
   async remove(id: string) {
-    return this.employeesRepository.softDelete(id);
+    await this.employeesRepository.softDelete(id);
+    return { message: 'Employee deletion successful' };
   }
 }
