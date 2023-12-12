@@ -5,6 +5,8 @@ import { Employee } from 'src/entities/employee.entity';
 import { Project } from 'src/entities/project.entity';
 import { EmployeeProject } from 'src/entities/employee_project.entity';
 import { EmployeeService } from './employee.service';
+import { AssignService } from '../assign/assign.service';
+import { AssignController } from '../assign/assign.controller';
 
 @Module({
   imports: [
@@ -12,8 +14,8 @@ import { EmployeeService } from './employee.service';
     TypeOrmModule.forFeature([Project]),
     TypeOrmModule.forFeature([EmployeeProject]),
   ],
-  controllers: [EmployeeController],
-  providers: [EmployeeService],
+  controllers: [EmployeeController, AssignController],
+  providers: [EmployeeService, AssignService],
 })
 export class EmployeeModule {
   static forFeature(
