@@ -93,16 +93,27 @@ export class EmployeeService {
       .leftJoinAndSelect('employee_project.project', 'project')
       .where('employee.id = :id', { id })
       .getOne();
+
     if (employee) {
-      const tracking = employee.employee_project.map(
+      const employeeProjectsWithDeletedAt = await this.entityManager
+        .getRepository(EmployeeProject)
+        .createQueryBuilder('employee_project')
+        .leftJoin('employee_project.employee', 'employee')
+        .leftJoinAndSelect('employee_project.project', 'project')
+        .where('employee.id = :id', { id })
+        .withDeleted()
+        .getMany();
+
+      const tracking = employeeProjectsWithDeletedAt.map(
         (employeeProject: EmployeeProject) => ({
           projectName: employeeProject.project.name,
           projectStartDate: employeeProject.project.startDate,
           joinDate: employeeProject.joinDate,
-          doneDate: employeeProject.fireDate,
+          doneDate: employeeProject.deletedAt,
           projectEndDate: employeeProject.project.endDate,
         }),
       );
+
       employee.tracking = {
         joinDate: employee.joinDate,
         projects: tracking,
