@@ -18,9 +18,10 @@ export class EmployeeProject extends AbstractEntity {
   @Column({
     type: 'enum',
     enum: PositionEnum,
-    default: PositionEnum.FULLSTACK,
+    array: true,
+    default: [PositionEnum.BA],
   })
-  role: PositionEnum;
+  roles: PositionEnum[];
 
   @Column()
   joinDate: Date;
@@ -42,6 +43,7 @@ export class EmployeeProject extends AbstractEntity {
   @ManyToOne(() => Employee, (employee) => employee.employee_project)
   @JoinColumn({ name: 'employeeId', referencedColumnName: 'id' })
   employee: Employee;
+  formattedRoles: PositionEnum[];
   constructor(assign: Partial<EmployeeProject>) {
     super();
     Object.assign(this, assign);

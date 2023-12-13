@@ -18,12 +18,12 @@ export class AssignService {
   ) {}
 
   async assignEmployeeToProject(assignDto: CreateAssignDto) {
-    const { employeeId, projectId, role, joinDate, fireDate } = assignDto;
+    const { employeeId, projectId, roles, joinDate, fireDate } = assignDto;
 
     const employeeProject = new EmployeeProject(assignDto);
     employeeProject.employeeId = employeeId;
     employeeProject.projectId = projectId;
-    employeeProject.role = role;
+    employeeProject.roles = roles;
     employeeProject.joinDate = joinDate;
     employeeProject.fireDate = fireDate;
 
@@ -67,7 +67,7 @@ export class AssignService {
 
   async update(id: string, updateProjectDto: UpdateAssignDto) {
     const project = await this.assignRespository.findOneBy({ id });
-    project.role = updateProjectDto.role;
+    project.roles = updateProjectDto.roles;
     project.joinDate = updateProjectDto.joinDate;
     project.fireDate = updateProjectDto.fireDate;
     await this.entityManager.save(project);

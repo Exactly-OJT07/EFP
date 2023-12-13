@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsNotEmpty, IsUUID, IsEnum, IsDate } from 'class-validator';
 import { PositionEnum } from 'src/common/enum/enums';
 
@@ -10,9 +11,9 @@ export class CreateAssignDto {
   @IsUUID()
   projectId: string;
 
+  @Type(() => IsEnum)
   @IsNotEmpty()
-  @IsEnum(PositionEnum)
-  role: PositionEnum;
+  roles: PositionEnum[];
 
   @IsNotEmpty()
   @IsDate()
