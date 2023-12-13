@@ -31,6 +31,10 @@ export class EmployeeController {
   findAll(@Query() params: GetEmployeeParams) {
     return this.employeeService.getEmployees(params);
   }
+  @Get('deleted')
+  async getEmpoyeeDeleted(@Query() params: GetEmployeeParams) {
+    return this.employeeService.getEmpoyeeDeleted(params);
+  }
   @Get('managers')
   async getManagers(@Query() params: GetManagers) {
     return this.employeeService.getManagers(params);

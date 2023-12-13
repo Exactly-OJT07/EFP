@@ -76,6 +76,57 @@ export class ProjectService {
     return new ResponsePaginate(result, pageMetaDto, 'Successfully');
   }
 
+  async getProjectDeleted(params: GetProjectParams) {
+    const projects = this.projectRespository
+      .createQueryBuilder('project')
+      .select([
+        'project',
+        'manager.code',
+        'manager.name',
+        'manager.avatar',
+        'manager.email',
+        'employee_project',
+        'employee_project.roles',
+        'employee_project.joinDate',
+        'employee_project.fireDate',
+        'employee_project.employeeId',
+        'employee.name',
+        'employee.email',
+        'employee.code',
+        'employee.avatar',
+      ])
+      .leftJoin('project.managerProject', 'manager')
+      .leftJoin('project.employee_project', 'employee_project')
+      .leftJoin('employee_project.employee', 'employee')
+      .andWhere('project.status = ANY(:status)', {
+        status: params.status
+          ? [params.status]
+          : [
+              StatusProjectEnum.DONE,
+              StatusProjectEnum.ON_PROGRESS,
+              StatusProjectEnum.PENDING,
+              StatusProjectEnum.CLOSED,
+            ],
+      })
+      .where('project.deletedAt IS NOT NULL')
+      .skip(params.skip)
+      .take(params.take)
+      .withDeleted()
+      .orderBy('project.createdAt', Order.DESC);
+
+    if (params.search) {
+      projects.andWhere('project.name ILIKE :name', {
+        name: `%${params.search}%`,
+      });
+    }
+    const [result, total] = await projects.getManyAndCount();
+    const pageMetaDto = new PageMetaDto({
+      itemCount: total,
+      pageOptionsDto: params,
+    });
+    return new ResponsePaginate(result, pageMetaDto, 'Successfully');
+  }
+
   async getProjectById(id: string) {
     const project = await this.projectRespository
       .createQueryBuilder('project')

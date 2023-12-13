@@ -63,6 +63,46 @@ export class EmployeeService {
     return new ResponsePaginate(result, pageMetaDto, 'Successfully ');
   }
 
+  async getEmpoyeeDeleted(params: GetEmployeeParams) {
+    const deletedEmployees = await this.employeesRepository
+      .createQueryBuilder('employee')
+      .select([
+        'employee',
+        'manager.name',
+        'manager.code',
+        'manager.email',
+        'manager.phone',
+      ])
+      .leftJoin('employee.manager', 'manager')
+      .leftJoinAndSelect('employee.employee_project', 'employee_project')
+      .leftJoinAndSelect('employee_project.project', 'project')
+      .where('employee.deletedAt IS NOT NULL')
+      .skip(params.skip)
+      .take(params.take)
+      .withDeleted()
+      .orderBy('employee.createdAt', Order.DESC);
+
+    if (params.searchByName) {
+      deletedEmployees.andWhere('employee.name ILIKE :name', {
+        name: `%${params.searchByName}%`,
+      });
+    }
+
+    if (params.searchByEmail) {
+      deletedEmployees.andWhere('employee.email ILIKE :email', {
+        email: `%${params.searchByEmail}%`,
+      });
+    }
+
+    const [result, total] = await deletedEmployees.getManyAndCount();
+    const pageMetaDto = new PageMetaDto({
+      itemCount: total,
+      pageOptionsDto: params,
+    });
+
+    return new ResponsePaginate(result, pageMetaDto, 'Thành công');
+  }
+
   async getManagers(params: GetManagers) {
     try {
       const managers = await this.employeesRepository
