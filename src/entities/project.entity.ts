@@ -50,6 +50,9 @@ export class Project extends AbstractEntity {
   @Column()
   endDate: Date;
 
+  @Column({ type: 'jsonb', nullable: true })
+  tracking: any;
+
   @OneToMany(
     () => EmployeeProject,
     (employee_project) => employee_project.project,

@@ -9,6 +9,7 @@ import { Order, StatusProjectEnum } from 'src/common/enum/enums';
 import { PageMetaDto } from 'src/common/dtos/pageMeta';
 import { ResponsePaginate } from 'src/common/dtos/responsePaginate';
 import { Employee } from 'src/entities/employee.entity';
+import { EmployeeProject } from 'src/entities/employee_project.entity';
 
 @Injectable()
 export class ProjectService {
@@ -76,15 +77,42 @@ export class ProjectService {
   }
 
   async getProjectById(id: string) {
-    const employee = await this.projectRespository
+    const project = await this.projectRespository
       .createQueryBuilder('project')
       .leftJoinAndSelect('project.managerProject', 'manager')
       .leftJoinAndSelect('project.employee_project', 'employee_project')
       .leftJoinAndSelect('employee_project.employee', 'employee')
       .where('project.id = :id', { id })
       .getOne();
-    return employee;
+
+    if (project) {
+      const projectEmployeesWithDeletedAt = await this.entityManager
+        .getRepository(EmployeeProject)
+        .createQueryBuilder('employee_project')
+        .leftJoinAndSelect('employee_project.employee', 'employee')
+        .leftJoinAndSelect('employee_project.project', 'project')
+        .where('project.id = :id', { id })
+        .withDeleted()
+        .getMany();
+
+      const tracking = projectEmployeesWithDeletedAt.map(
+        (projectEmployee: EmployeeProject) => ({
+          employeeName: projectEmployee.employee?.name,
+          role: projectEmployee.role,
+          joinDate: projectEmployee.joinDate,
+          doneDate: projectEmployee.deletedAt,
+        }),
+      );
+
+      project.tracking = {
+        joinDate: project.startDate,
+        member: tracking,
+        fireDate: project.endDate,
+      };
+    }
+    return project;
   }
+
   async getUnassignedEmployeesInProject(id: string) {
     const project = await this.projectRespository
       .createQueryBuilder('project')
