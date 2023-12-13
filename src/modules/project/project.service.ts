@@ -37,7 +37,7 @@ export class ProjectService {
         'manager.avatar',
         'manager.email',
         'employee_project',
-        'employee_project.role',
+        'employee_project.roles',
         'employee_project.joinDate',
         'employee_project.fireDate',
         'employee_project.employeeId',
@@ -98,7 +98,7 @@ export class ProjectService {
       const tracking = projectEmployeesWithDeletedAt.map(
         (projectEmployee: EmployeeProject) => ({
           employeeName: projectEmployee.employee?.name,
-          role: projectEmployee.role,
+          roles: projectEmployee.roles,
           joinDate: projectEmployee.joinDate,
           doneDate: projectEmployee.deletedAt,
         }),
