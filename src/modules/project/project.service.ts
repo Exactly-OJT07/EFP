@@ -27,6 +27,54 @@ export class ProjectService {
     return { project, message: 'Successfully create projects' };
   }
 
+  async getTotalProject(period: string) {
+    const total = await this.projectRespository.count();
+    const pastYear = new Date();
+    pastYear.setFullYear(pastYear.getFullYear() - 1);
+
+    let oldCount, currentCount;
+    if (period === 'year') {
+      oldCount = await this.projectRespository
+        .createQueryBuilder('project')
+        .where('EXTRACT(YEAR FROM project.createdAt) = :pastYear', {
+          pastYear: pastYear.getFullYear(),
+        })
+        .getCount();
+
+      currentCount = await this.projectRespository
+        .createQueryBuilder('project')
+        .where('EXTRACT(YEAR FROM project.createdAt) = :currentYear', {
+          currentYear: new Date().getFullYear(),
+        })
+        .getCount();
+    } else if (period === 'month') {
+      oldCount = await this.projectRespository
+        .createQueryBuilder('project')
+        .where('EXTRACT(YEAR FROM project.createdAt) = :pastYear', {
+          pastYear: pastYear.getFullYear(),
+        })
+        .andWhere('EXTRACT(MONTH FROM project.createdAt) = :pastMonth', {
+          pastMonth: pastYear.getMonth() + 1,
+        })
+        .getCount();
+
+      currentCount = await this.projectRespository
+        .createQueryBuilder('project')
+        .where('EXTRACT(YEAR FROM project.createdAt) = :currentYear', {
+          currentYear: new Date().getFullYear(),
+        })
+        .andWhere('EXTRACT(MONTH FROM project.createdAt) = :currentMonth', {
+          currentMonth: new Date().getMonth() + 1,
+        })
+        .getCount();
+    }
+
+    const percentageChange =
+      oldCount === 0 ? 100 : ((currentCount - oldCount) / oldCount) * 100;
+
+    return { oldCount, currentCount, total, percentageChange };
+  }
+
   async getProjects(params: GetProjectParams) {
     const projects = this.projectRespository
       .createQueryBuilder('project')
@@ -61,6 +109,57 @@ export class ProjectService {
       })
       .skip(params.skip)
       .take(params.take)
+      .orderBy('project.createdAt', Order.DESC);
+
+    if (params.search) {
+      projects.andWhere('project.name ILIKE :name', {
+        name: `%${params.search}%`,
+      });
+    }
+    const [result, total] = await projects.getManyAndCount();
+    const pageMetaDto = new PageMetaDto({
+      itemCount: total,
+      pageOptionsDto: params,
+    });
+    return new ResponsePaginate(result, pageMetaDto, 'Successfully');
+  }
+
+  async getProjectDeleted(params: GetProjectParams) {
+    const projects = this.projectRespository
+      .createQueryBuilder('project')
+      .select([
+        'project',
+        'manager.code',
+        'manager.name',
+        'manager.avatar',
+        'manager.email',
+        'employee_project',
+        'employee_project.roles',
+        'employee_project.joinDate',
+        'employee_project.fireDate',
+        'employee_project.employeeId',
+        'employee.name',
+        'employee.email',
+        'employee.code',
+        'employee.avatar',
+      ])
+      .leftJoin('project.managerProject', 'manager')
+      .leftJoin('project.employee_project', 'employee_project')
+      .leftJoin('employee_project.employee', 'employee')
+      .andWhere('project.status = ANY(:status)', {
+        status: params.status
+          ? [params.status]
+          : [
+              StatusProjectEnum.DONE,
+              StatusProjectEnum.ON_PROGRESS,
+              StatusProjectEnum.PENDING,
+              StatusProjectEnum.CLOSED,
+            ],
+      })
+      .where('project.deletedAt IS NOT NULL')
+      .skip(params.skip)
+      .take(params.take)
+      .withDeleted()
       .orderBy('project.createdAt', Order.DESC);
 
     if (params.search) {

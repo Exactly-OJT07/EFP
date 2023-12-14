@@ -27,9 +27,18 @@ export class EmployeeController {
     return { result, message: 'Successfully create new employee' };
   }
 
+  @Get('total')
+  getTotalEmployee(@Query('period') period: string) {
+    return this.employeeService.getTotalEmployee(period);
+  }
+
   @Get()
   findAll(@Query() params: GetEmployeeParams) {
     return this.employeeService.getEmployees(params);
+  }
+  @Get('deleted')
+  async getEmpoyeeDeleted(@Query() params: GetEmployeeParams) {
+    return this.employeeService.getEmpoyeeDeleted(params);
   }
   @Get('managers')
   async getManagers(@Query() params: GetManagers) {
