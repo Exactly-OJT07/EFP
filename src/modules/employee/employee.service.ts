@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EntityManager, Repository } from 'typeorm';
 import { Employee } from 'src/entities/employee.entity';
@@ -24,6 +24,25 @@ export class EmployeeService {
     private readonly entityManager: EntityManager,
   ) {}
   async create(createEmployeeDto: CreateEmployeeDto) {
+    const existingEmployee = await this.employeesRepository.findOne({
+      where: [
+        { code: createEmployeeDto.code },
+        { email: createEmployeeDto.email },
+      ],
+    });
+
+    if (existingEmployee) {
+      if (existingEmployee.code === createEmployeeDto.code) {
+        throw new ConflictException(
+          `Employee with code ${createEmployeeDto.code} already exists.`,
+        );
+      } else if (existingEmployee.email === createEmployeeDto.email) {
+        throw new ConflictException(
+          `Employee with email ${createEmployeeDto.email} already exists.`,
+        );
+      }
+    }
+
     const employee = new Employee(createEmployeeDto);
     await this.entityManager.save(employee);
     return { employee, message: 'Successfully create employee' };
@@ -148,7 +167,7 @@ export class EmployeeService {
       pageOptionsDto: params,
     });
 
-    return new ResponsePaginate(result, pageMetaDto, 'Thành công');
+    return new ResponsePaginate(result, pageMetaDto, 'Successfully');
   }
 
   async getManagers(params: GetManagers) {
@@ -208,7 +227,7 @@ export class EmployeeService {
         fireDate: employee.fireDate,
       };
     }
-    return employee;
+    return { employee, message: 'Successfully get data of employee' };
   }
 
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {

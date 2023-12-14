@@ -26,7 +26,7 @@ export class EmployeeProject extends AbstractEntity {
   @Column()
   joinDate: Date;
 
-  @Column()
+  @Column({ nullable: true })
   fireDate: Date;
 
   @Column({ nullable: true })
