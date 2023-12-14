@@ -27,6 +27,11 @@ export class EmployeeController {
     return { result, message: 'Successfully create new employee' };
   }
 
+  @Get('total')
+  getTotalEmployee(@Query('period') period: string) {
+    return this.employeeService.getTotalEmployee(period);
+  }
+
   @Get()
   findAll(@Query() params: GetEmployeeParams) {
     return this.employeeService.getEmployees(params);

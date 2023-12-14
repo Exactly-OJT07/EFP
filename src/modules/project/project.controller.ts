@@ -24,6 +24,11 @@ export class ProjectController {
     return this.projectService.create(createProjectDto);
   }
 
+  @Get('total')
+  getTotalEmployee(@Query('period') period: string) {
+    return this.projectService.getTotalProject(period);
+  }
+
   @Get()
   findAll(@Query() params: GetProjectParams) {
     return this.projectService.getProjects(params);

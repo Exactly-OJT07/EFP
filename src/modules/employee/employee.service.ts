@@ -29,6 +29,54 @@ export class EmployeeService {
     return { employee, message: 'Successfully create employee' };
   }
 
+  async getTotalEmployee(period: string) {
+    const total = await this.employeesRepository.count();
+    const pastYear = new Date();
+    pastYear.setFullYear(pastYear.getFullYear() - 1);
+
+    let oldCount, currentCount;
+    if (period === 'year') {
+      oldCount = await this.employeesRepository
+        .createQueryBuilder('employee')
+        .where('EXTRACT(YEAR FROM employee.createdAt) = :pastYear', {
+          pastYear: pastYear.getFullYear(),
+        })
+        .getCount();
+
+      currentCount = await this.employeesRepository
+        .createQueryBuilder('employee')
+        .where('EXTRACT(YEAR FROM employee.createdAt) = :currentYear', {
+          currentYear: new Date().getFullYear(),
+        })
+        .getCount();
+    } else if (period === 'month') {
+      oldCount = await this.employeesRepository
+        .createQueryBuilder('employee')
+        .where('EXTRACT(YEAR FROM employee.createdAt) = :pastYear', {
+          pastYear: pastYear.getFullYear(),
+        })
+        .andWhere('EXTRACT(MONTH FROM employee.createdAt) = :pastMonth', {
+          pastMonth: pastYear.getMonth() + 1,
+        })
+        .getCount();
+
+      currentCount = await this.employeesRepository
+        .createQueryBuilder('employee')
+        .where('EXTRACT(YEAR FROM employee.createdAt) = :currentYear', {
+          currentYear: new Date().getFullYear(),
+        })
+        .andWhere('EXTRACT(MONTH FROM employee.createdAt) = :currentMonth', {
+          currentMonth: new Date().getMonth() + 1,
+        })
+        .getCount();
+    }
+
+    const percentageChange =
+      oldCount === 0 ? 100 : ((currentCount - oldCount) / oldCount) * 100;
+
+    return { oldCount, currentCount, total, percentageChange };
+  }
+
   async getEmployees(params: GetEmployeeParams) {
     const employees = this.employeesRepository
       .createQueryBuilder('employee')
