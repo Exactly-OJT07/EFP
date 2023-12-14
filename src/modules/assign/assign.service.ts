@@ -73,7 +73,6 @@ export class AssignService {
     const project = await this.assignRespository.findOneBy({ id });
     project.roles = updateProjectDto.roles;
     project.joinDate = updateProjectDto.joinDate;
-    project.fireDate = updateProjectDto.fireDate;
     await this.entityManager.save(project);
   }
 

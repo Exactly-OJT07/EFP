@@ -56,6 +56,22 @@ export class ProjectService {
     pastYear.setFullYear(pastYear.getFullYear() - 1);
 
     let oldCount, currentCount;
+
+    const pendingCount = await this.projectRespository
+      .createQueryBuilder('project')
+      .where('project.status = :status', { status: 'pending' })
+      .getCount();
+
+    const onProgressCount = await this.projectRespository
+      .createQueryBuilder('project')
+      .where('project.status = :status', { status: 'on_progress' })
+      .getCount();
+
+    const doneCount = await this.projectRespository
+      .createQueryBuilder('project')
+      .where('project.status = :status', { status: 'done' })
+      .getCount();
+
     if (period === 'year') {
       oldCount = await this.projectRespository
         .createQueryBuilder('project')
@@ -95,7 +111,15 @@ export class ProjectService {
     const percentageChange =
       oldCount === 0 ? 100 : ((currentCount - oldCount) / oldCount) * 100;
 
-    return { oldCount, currentCount, total, percentageChange };
+    return {
+      oldCount,
+      currentCount,
+      total,
+      percentageChange,
+      doneCount,
+      onProgressCount,
+      pendingCount,
+    };
   }
 
   async getProjects(params: GetProjectParams) {
