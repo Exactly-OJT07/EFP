@@ -15,6 +15,7 @@ import { Project } from './project.entity';
 export class Employee extends AbstractEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @Column()
   email: string;
 
