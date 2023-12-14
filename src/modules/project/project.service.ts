@@ -22,9 +22,32 @@ export class ProjectService {
   ) {}
 
   async create(createProjectDto: CreateProjectDto) {
-    const project = new Project(createProjectDto);
-    await this.entityManager.save(project);
-    return { project, message: 'Successfully create projects' };
+    const { employee_project, ...projectData } = createProjectDto;
+
+    const project = new Project(projectData);
+    await this.entityManager.save(Project, project);
+
+    if (employee_project && employee_project.length > 0) {
+      const employeeProjects = employee_project.map((employeeData) => {
+        const { employeeId, roles } = employeeData;
+        const employeeProject = new EmployeeProject({
+          employeeId,
+          roles,
+          joinDate: new Date(),
+          fireDate: null,
+          project,
+        });
+
+        return employeeProject;
+      });
+
+      await this.entityManager.save(EmployeeProject, employeeProjects);
+    }
+
+    return {
+      project,
+      message: 'Successfully created a project with assigned employees',
+    };
   }
 
   async getTotalProject(period: string) {
@@ -209,7 +232,10 @@ export class ProjectService {
         fireDate: project.endDate,
       };
     }
-    return project;
+    return {
+      project,
+      message: 'Successfully get project',
+    };
   }
 
   async getUnassignedEmployeesInProject(id: string) {
@@ -229,7 +255,10 @@ export class ProjectService {
         (assignedEmployee) => assignedEmployee.employeeId === employee.id,
       );
     });
-    return unassignedEmployees;
+    return {
+      unassignedEmployees,
+      message: 'Successfully get all unassigned Employees',
+    };
   }
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {

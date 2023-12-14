@@ -28,6 +28,10 @@ export class AssignService {
     employeeProject.fireDate = fireDate;
 
     await this.entityManager.save(employeeProject);
+    return {
+      employeeProject,
+      message: 'Successfully assign employee into project ',
+    };
   }
 
   async getAssigns(params: GetAssignParams) {
@@ -75,5 +79,6 @@ export class AssignService {
 
   async remove(id: string) {
     await this.assignRespository.softDelete(id);
+    return { data: null, message: 'Successfully delete assign' };
   }
 }
