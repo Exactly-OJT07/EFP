@@ -55,8 +55,7 @@ export class ProjectService {
     const pastYear = new Date();
     pastYear.setFullYear(pastYear.getFullYear() - 1);
 
-    let oldCount, currentCount;
-
+    let oldCount, currentCount, oldDoneCount, currentDoneCount;
     const pendingCount = await this.projectRespository
       .createQueryBuilder('project')
       .where('project.status = :status', { status: 'pending' })
@@ -86,14 +85,30 @@ export class ProjectService {
           currentYear: new Date().getFullYear(),
         })
         .getCount();
+
+      oldDoneCount = await this.projectRespository
+        .createQueryBuilder('project')
+        .where('project.status = :status', { status: 'done' })
+        .andWhere('EXTRACT(YEAR FROM project.endDate) = :oldYear', {
+          oldYear: pastYear.getFullYear(),
+        })
+        .getCount();
+
+      currentDoneCount = await this.projectRespository
+        .createQueryBuilder('project')
+        .where('project.status = :status', { status: 'done' })
+        .andWhere('EXTRACT(YEAR FROM project.endDate) = :currentYear', {
+          currentYear: new Date().getFullYear(),
+        })
+        .getCount();
     } else if (period === 'month') {
       oldCount = await this.projectRespository
         .createQueryBuilder('project')
         .where('EXTRACT(YEAR FROM project.createdAt) = :pastYear', {
-          pastYear: pastYear.getFullYear(),
+          pastYear: new Date().getFullYear(),
         })
         .andWhere('EXTRACT(MONTH FROM project.createdAt) = :pastMonth', {
-          pastMonth: pastYear.getMonth() + 1,
+          pastMonth: pastYear.getMonth(),
         })
         .getCount();
 
@@ -106,19 +121,53 @@ export class ProjectService {
           currentMonth: new Date().getMonth() + 1,
         })
         .getCount();
+
+      oldDoneCount = await this.projectRespository
+        .createQueryBuilder('project')
+        .where('project.status = :status', { status: 'done' })
+        .andWhere('EXTRACT(YEAR FROM project.endDate) = :pastYear', {
+          pastYear: new Date().getFullYear(),
+        })
+        .andWhere('EXTRACT(MONTH FROM project.endDate) = :pastMonth', {
+          pastMonth: pastYear.getMonth(),
+        })
+        .getCount();
+
+      currentDoneCount = await this.projectRespository
+        .createQueryBuilder('project')
+        .where('project.status = :status', { status: 'done' })
+        .andWhere('EXTRACT(YEAR FROM project.endDate) = :currentYear', {
+          currentYear: new Date().getFullYear(),
+        })
+        .andWhere('EXTRACT(MONTH FROM project.endDate) = :currentMonth', {
+          currentMonth: new Date().getMonth() + 1,
+        })
+        .getCount();
     }
 
-    const percentageChange =
+    const percentageProjectChange =
       oldCount === 0 ? 100 : ((currentCount - oldCount) / oldCount) * 100;
 
+    const percentageDoneChange =
+      oldDoneCount === 0
+        ? 100
+        : ((currentDoneCount - oldDoneCount) / oldDoneCount) * 100;
+
+    const pendingPercentage = (pendingCount / total) * 100;
+    const onProgressPercentage = (onProgressCount / total) * 100;
+    const donePercentage = (doneCount / total) * 100;
+
     return {
+      total,
       oldCount,
       currentCount,
-      total,
-      percentageChange,
-      doneCount,
-      onProgressCount,
-      pendingCount,
+      percentageProjectChange,
+      oldDoneCount,
+      currentDoneCount,
+      percentageDoneChange,
+      pendingPercentage,
+      onProgressPercentage,
+      donePercentage,
     };
   }
 
