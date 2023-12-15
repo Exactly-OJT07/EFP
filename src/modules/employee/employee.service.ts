@@ -72,19 +72,19 @@ export class EmployeeService {
       oldCount = await this.employeesRepository
         .createQueryBuilder('employee')
         .where('EXTRACT(YEAR FROM employee.createdAt) = :pastYear', {
-          pastYear: pastYear.getFullYear(),
+          pastYear: new Date().getFullYear(),
         })
         .andWhere('EXTRACT(MONTH FROM employee.createdAt) = :pastMonth', {
-          pastMonth: pastYear.getMonth() + 1,
+          pastMonth: pastYear.getMonth(),
         })
         .getCount();
 
       currentCount = await this.employeesRepository
-        .createQueryBuilder('employee')
-        .where('EXTRACT(YEAR FROM employee.createdAt) = :currentYear', {
+        .createQueryBuilder('project')
+        .where('EXTRACT(YEAR FROM project.createdAt) = :currentYear', {
           currentYear: new Date().getFullYear(),
         })
-        .andWhere('EXTRACT(MONTH FROM employee.createdAt) = :currentMonth', {
+        .andWhere('EXTRACT(MONTH FROM project.createdAt) = :currentMonth', {
           currentMonth: new Date().getMonth() + 1,
         })
         .getCount();
