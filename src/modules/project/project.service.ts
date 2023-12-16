@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { EntityManager, Repository } from 'typeorm';
-import { Project } from '../../entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GetProjectParams } from './dto/getList-project.dto';
-import { Order, StatusProjectEnum } from 'src/common/enum/enums';
 import { PageMetaDto } from 'src/common/dtos/pageMeta';
 import { ResponsePaginate } from 'src/common/dtos/responsePaginate';
+import { Order, StatusProjectEnum } from 'src/common/enum/enums';
 import { Employee } from 'src/entities/employee.entity';
 import { EmployeeProject } from 'src/entities/employee_project.entity';
+import { EntityManager, Repository } from 'typeorm';
+import { Project } from '../../entities/project.entity';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { GetProjectParams } from './dto/getList-project.dto';
+import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Injectable()
 export class ProjectService {
@@ -292,6 +292,7 @@ export class ProjectService {
 
       const tracking = projectEmployeesWithDeletedAt.map(
         (projectEmployee: EmployeeProject) => ({
+          id: projectEmployee.employee.id,
           employeeName: projectEmployee.employee?.name,
           roles: projectEmployee.roles,
           joinDate: projectEmployee.joinDate,

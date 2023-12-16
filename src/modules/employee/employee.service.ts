@@ -1,16 +1,20 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { EntityManager, Repository } from 'typeorm';
-import { Employee } from 'src/entities/employee.entity';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import Docxtemplater from 'docxtemplater';
+import * as fs from 'fs';
+import path from 'path';
+import PizZip from 'pizzip';
 import { PageMetaDto } from 'src/common/dtos/pageMeta';
 import { ResponsePaginate } from 'src/common/dtos/responsePaginate';
-import { GetEmployeeParams } from './dto/getList_employee.dto';
 import { Order } from 'src/common/enum/enums';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { Project } from 'src/entities/project.entity';
+import { Employee } from 'src/entities/employee.entity';
 import { EmployeeProject } from 'src/entities/employee_project.entity';
+import { Project } from 'src/entities/project.entity';
+import { EntityManager, Repository } from 'typeorm';
+import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { GetEmployeeParams } from './dto/getList_employee.dto';
 import { GetManagers } from './dto/getManager.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -23,6 +27,87 @@ export class EmployeeService {
     private readonly assignsRepository: Repository<EmployeeProject>,
     private readonly entityManager: EntityManager,
   ) {}
+
+  async generateCv(id: string) {
+    const { employee } = await this.getEmployeeById(id);
+    const dataDocx = {
+      name: employee.name,
+      address: employee.address,
+      email: employee.email,
+      date: `${new Date(employee.createdAt).getMonth() + 1}/${new Date(
+        employee.createdAt,
+      ).getFullYear()}`,
+      lang_frame:
+        employee.langFrame
+          ?.map(function (item) {
+            return (
+              (item as unknown as string).charAt(0).toUpperCase() +
+              (item as unknown as string).slice(1).toLowerCase()
+            );
+          })
+          .join(', ') ?? '',
+      technical:
+        employee.tech
+          ?.map(function (item) {
+            return (
+              (item as unknown as string).charAt(0).toUpperCase() +
+              (item as unknown as string).slice(1).toLowerCase()
+            );
+          })
+          .join(', ') ?? '',
+      projects: employee.employee_project.map((item) => {
+        return {
+          project_name: item.project.name,
+          role: item.roles
+            .map(
+              (item) =>
+                item.charAt(0).toUpperCase() + item.slice(1).toLowerCase(),
+            )
+            .join(', '),
+          description: item.project.description,
+          specification: item.project.specification,
+          lang_frame_project:
+            item.project.langFrame
+              .map(
+                (item) =>
+                  (item as unknown as string)?.charAt(0).toUpperCase() +
+                  (item as unknown as string)?.slice(1).toLowerCase(),
+              )
+              .join(', ') ?? '',
+          tech_project:
+            item.project.technology
+              .map(
+                (item) =>
+                  (item as unknown as string)?.charAt(0).toUpperCase() +
+                  (item as unknown as string)?.slice(1).toLowerCase(),
+              )
+              .join(', ') ?? '',
+        };
+      }),
+      skills: employee.skills.map((item) => {
+        return {
+          name: item.name,
+          exp: item.exp,
+        };
+      }),
+    };
+
+    // console.log(dataDocx);
+    // return employee;
+    const content = fs.readFileSync(path.resolve('template2.docx'), 'binary');
+    const zip = new PizZip(content);
+    const doc = new Docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
+    doc.render(dataDocx);
+    const buf = doc.getZip().generate({
+      type: 'nodebuffer',
+      compression: 'DEFLATE',
+    });
+    fs.writeFileSync(path.resolve('output.docx'), buf);
+  }
+
   async create(createEmployeeDto: CreateEmployeeDto) {
     const existingEmployee = await this.employeesRepository.findOne({
       where: [
@@ -33,11 +118,11 @@ export class EmployeeService {
 
     if (existingEmployee) {
       if (existingEmployee.code === createEmployeeDto.code) {
-        throw new ConflictException(
+        throw new BadRequestException(
           `Employee with code ${createEmployeeDto.code} already exists.`,
         );
       } else if (existingEmployee.email === createEmployeeDto.email) {
-        throw new ConflictException(
+        throw new BadRequestException(
           `Employee with email ${createEmployeeDto.email} already exists.`,
         );
       }

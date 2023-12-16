@@ -1,5 +1,5 @@
-import { GenderEnum, PositionEnum, StatusEnum } from 'src/common/enum/enums';
 import { AbstractEntity } from 'src/common/entities/abstract.entity';
+import { GenderEnum, PositionEnum, StatusEnum } from 'src/common/enum/enums';
 import {
   Column,
   Entity,
@@ -62,8 +62,17 @@ export class Employee extends AbstractEntity {
   @Column('json', { nullable: true })
   skills: { name: string; exp: number }[];
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   description: string;
+
+  @Column({ nullable: true })
+  address: string;
+
+  @Column('json', { nullable: true })
+  langFrame: { name: string }[];
+
+  @Column('json', { nullable: true })
+  tech: { name: string }[];
 
   @Column({ nullable: false })
   joinDate: Date;
