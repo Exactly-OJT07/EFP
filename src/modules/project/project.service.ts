@@ -143,24 +143,6 @@ export class ProjectService {
           currentMonth: new Date().getMonth() + 1,
         })
         .getCount();
-    } else if (period === 'count_join') {
-      const currentYear = new Date().getFullYear();
-      const joinCounts = {};
-
-      for (let month = 0; month < 12; month++) {
-        const count = await this.projectRespository
-          .createQueryBuilder('project')
-          .where('EXTRACT(YEAR FROM project.startDate) = :year', {
-            year: currentYear,
-          })
-          .andWhere('EXTRACT(MONTH FROM project.startDate) = :month', {
-            month: month + 1,
-          })
-          .getCount();
-
-        joinCounts[month + 1] = count;
-      }
-      return joinCounts;
     }
 
     const percentageProjectChange =

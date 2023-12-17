@@ -66,10 +66,13 @@ export class Employee extends AbstractEntity {
   address: string;
 
   @Column('json', { nullable: true })
-  langFrame: { name: string; exp: number }[];
+  skills: { name: string; exp: number }[];
 
   @Column('json', { nullable: true })
-  tech: { name: string; exp: number }[];
+  langFrame: { name: string }[];
+
+  @Column('json', { nullable: true })
+  tech: { name: string }[];
 
   @Column({ nullable: false })
   joinDate: Date;
