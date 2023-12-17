@@ -18,7 +18,4 @@ export class CreateAssignDto {
   @IsNotEmpty()
   @IsDate()
   joinDate: Date;
-
-  @IsDate()
-  fireDate: Date;
 }

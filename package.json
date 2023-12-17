@@ -1,6 +1,5 @@
 {
   "name": "be-ojt-07",
-  "name": "be-ojt-07",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -37,11 +36,13 @@
     "class-validator": "^0.14.0",
     "cls-hooked": "^4.2.2",
     "date-fns": "^2.30.0",
+    "docxtemplater": "^3.42.4",
     "nestjs-class-validator": "^0.1.2",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.11.2",
+    "pizzip": "^3.1.4",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.17"

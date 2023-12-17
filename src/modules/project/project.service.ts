@@ -292,6 +292,7 @@ export class ProjectService {
 
       const tracking = projectEmployeesWithDeletedAt.map(
         (projectEmployee: EmployeeProject) => ({
+          id: projectEmployee.employee.id,
           employeeName: projectEmployee.employee?.name,
           roles: projectEmployee.roles,
           joinDate: projectEmployee.joinDate,
@@ -324,8 +325,10 @@ export class ProjectService {
     }
     const allEmployees = await this.employeeRespository.find();
     const unassignedEmployees = allEmployees.filter((employee) => {
-      return !project.employee_project.some(
-        (assignedEmployee) => assignedEmployee.employeeId === employee.id,
+      return (
+        !project.employee_project.some(
+          (assignedEmployee) => assignedEmployee.employeeId === employee.id,
+        ) && employee.status === 'active'
       );
     });
     return {

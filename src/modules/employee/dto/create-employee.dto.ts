@@ -33,6 +33,10 @@ export class CreateEmployeeDto {
 
   description: string;
 
+  langFrame: { name: string }[];
+
+  tech: { name: string }[];
+
   skills: { name: string; exp: number }[];
 
   @IsNotEmpty()

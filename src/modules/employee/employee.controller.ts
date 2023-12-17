@@ -27,6 +27,11 @@ export class EmployeeController {
     return { result, message: 'Successfully create new employee' };
   }
 
+  @Post('cv')
+  generateCv(@Body('id') id: string) {
+    return this.employeeService.generateCv(id);
+  }
+
   @Get('total')
   getTotalEmployee(@Query('period') period: string) {
     return this.employeeService.getTotalEmployee(period);
