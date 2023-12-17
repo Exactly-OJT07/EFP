@@ -33,9 +33,9 @@ export class CreateEmployeeDto {
 
   description: string;
 
-  langFrame: { name: string }[];
+  langFrame: { name: string; exp: number }[];
 
-  tech: { name: string }[];
+  tech: { name: string; exp: number }[];
 
   skills: { name: string; exp: number }[];
 

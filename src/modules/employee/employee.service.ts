@@ -85,12 +85,22 @@ export class EmployeeService {
               .join(', ') ?? '',
         };
       }),
-      skills: employee.skills.map((item) => {
-        return {
+      // skills: employee.skills.map((item) => {
+      //   return {
+      //     name: item.name,
+      //     exp: item.exp,
+      //   };
+      // }),
+      skills: [
+        ...employee.langFrame.map((item) => ({
           name: item.name,
           exp: item.exp,
-        };
-      }),
+        })),
+        ...employee.tech.map((item) => ({
+          name: item.name,
+          exp: item.exp,
+        })),
+      ],
     };
 
     const content = fs.readFileSync(path.resolve('template2.docx'), 'binary');
@@ -172,8 +182,25 @@ export class EmployeeService {
           currentMonth: new Date().getMonth() + 1,
         })
         .getCount();
-    }
+    } else if (period === 'count_join') {
+      const currentYear = new Date().getFullYear();
+      const joinCounts = {};
 
+      for (let month = 0; month < 12; month++) {
+        const count = await this.employeesRepository
+          .createQueryBuilder('employee')
+          .where('EXTRACT(YEAR FROM employee.joinDate) = :year', {
+            year: currentYear,
+          })
+          .andWhere('EXTRACT(MONTH FROM employee.joinDate) = :month', {
+            month: month + 1,
+          })
+          .getCount();
+
+        joinCounts[month + 1] = count;
+      }
+      return joinCounts;
+    }
     const percentageChange =
       oldCount === 0 ? 100 : ((currentCount - oldCount) / oldCount) * 100;
 
@@ -212,6 +239,51 @@ export class EmployeeService {
       pageOptionsDto: params,
     });
     return new ResponsePaginate(result, pageMetaDto, 'Successfully ');
+  }
+
+  async getEmployeeById(id: string) {
+    const employee = await this.employeesRepository
+      .createQueryBuilder('employee')
+      .select([
+        'employee',
+        'manager.name',
+        'manager.code',
+        'manager.email',
+        'manager.phone',
+      ])
+      .leftJoin('employee.manager', 'manager')
+      .leftJoinAndSelect('employee.employee_project', 'employee_project')
+      .leftJoinAndSelect('employee_project.project', 'project')
+      .where('employee.id = :id', { id })
+      .getOne();
+
+    if (employee) {
+      const employeeProjectsWithDeletedAt = await this.entityManager
+        .getRepository(EmployeeProject)
+        .createQueryBuilder('employee_project')
+        .leftJoin('employee_project.employee', 'employee')
+        .leftJoinAndSelect('employee_project.project', 'project')
+        .where('employee.id = :id', { id })
+        .withDeleted()
+        .getMany();
+
+      const tracking = employeeProjectsWithDeletedAt.map(
+        (employeeProject: EmployeeProject) => ({
+          projectName: employeeProject.project.name,
+          projectStartDate: employeeProject.project.startDate,
+          joinDate: employeeProject.joinDate,
+          doneDate: employeeProject.deletedAt,
+          projectEndDate: employeeProject.project.endDate,
+        }),
+      );
+
+      employee.tracking = {
+        joinDate: employee.joinDate,
+        projects: tracking,
+        fireDate: employee.deletedAt,
+      };
+    }
+    return { employee, message: 'Successfully get data of employee' };
   }
 
   async getEmpoyeeDeleted(params: GetEmployeeParams) {
@@ -269,51 +341,6 @@ export class EmployeeService {
     }
   }
 
-  async getEmployeeById(id: string) {
-    const employee = await this.employeesRepository
-      .createQueryBuilder('employee')
-      .select([
-        'employee',
-        'manager.name',
-        'manager.code',
-        'manager.email',
-        'manager.phone',
-      ])
-      .leftJoin('employee.manager', 'manager')
-      .leftJoinAndSelect('employee.employee_project', 'employee_project')
-      .leftJoinAndSelect('employee_project.project', 'project')
-      .where('employee.id = :id', { id })
-      .getOne();
-
-    if (employee) {
-      const employeeProjectsWithDeletedAt = await this.entityManager
-        .getRepository(EmployeeProject)
-        .createQueryBuilder('employee_project')
-        .leftJoin('employee_project.employee', 'employee')
-        .leftJoinAndSelect('employee_project.project', 'project')
-        .where('employee.id = :id', { id })
-        .withDeleted()
-        .getMany();
-
-      const tracking = employeeProjectsWithDeletedAt.map(
-        (employeeProject: EmployeeProject) => ({
-          projectName: employeeProject.project.name,
-          projectStartDate: employeeProject.project.startDate,
-          joinDate: employeeProject.joinDate,
-          doneDate: employeeProject.deletedAt,
-          projectEndDate: employeeProject.project.endDate,
-        }),
-      );
-
-      employee.tracking = {
-        joinDate: employee.joinDate,
-        projects: tracking,
-        fireDate: employee.deletedAt,
-      };
-    }
-    return { employee, message: 'Successfully get data of employee' };
-  }
-
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
     const employee = await this.employeesRepository.findOneBy({ id });
     if (employee) {
@@ -323,8 +350,9 @@ export class EmployeeService {
       employee.gender = updateEmployeeDto.gender;
       employee.position = updateEmployeeDto.position;
       employee.description = updateEmployeeDto.description;
+      employee.langFrame = updateEmployeeDto.langFrame;
+      employee.tech = updateEmployeeDto.tech;
       employee.status = updateEmployeeDto.status;
-      employee.skills = updateEmployeeDto.skills;
       employee.avatar = updateEmployeeDto.avatar;
       employee.joinDate = updateEmployeeDto.joinDate;
       employee.managerId = updateEmployeeDto.managerId;

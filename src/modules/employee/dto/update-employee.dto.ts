@@ -28,7 +28,9 @@ export class UpdateEmployeeDto {
   @IsNotEmpty()
   description: string;
 
-  skills: { name: string; exp: number }[];
+  langFrame: { name: string; exp: number }[];
+
+  tech: { name: string; exp: number }[];
 
   @IsNotEmpty()
   status: StatusEnum;
