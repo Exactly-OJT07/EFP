@@ -59,17 +59,23 @@ export class Employee extends AbstractEntity {
   @Column({ default: false })
   isManager: boolean;
 
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ nullable: true })
+  address: string;
+
   @Column('json', { nullable: true })
   skills: { name: string; exp: number }[];
 
-  @Column({ nullable: false })
-  description: string;
+  @Column('json', { nullable: true })
+  langFrame: { name: string }[];
+
+  @Column('json', { nullable: true })
+  tech: { name: string }[];
 
   @Column({ nullable: false })
   joinDate: Date;
-
-  @Column({ nullable: true })
-  fireDate: Date;
 
   @ManyToOne(() => Employee, { nullable: true })
   @JoinColumn({ name: 'managerId' })

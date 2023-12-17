@@ -18,14 +18,13 @@ export class AssignService {
   ) {}
 
   async assignEmployeeToProject(assignDto: CreateAssignDto) {
-    const { employeeId, projectId, roles, joinDate, fireDate } = assignDto;
+    const { employeeId, projectId, roles, joinDate } = assignDto;
 
     const employeeProject = new EmployeeProject(assignDto);
     employeeProject.employeeId = employeeId;
     employeeProject.projectId = projectId;
     employeeProject.roles = roles;
     employeeProject.joinDate = joinDate;
-    employeeProject.fireDate = fireDate;
 
     await this.entityManager.save(employeeProject);
     return {
