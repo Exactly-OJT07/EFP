@@ -102,7 +102,8 @@ export class EmployeeService {
       type: 'nodebuffer',
       compression: 'DEFLATE',
     });
-    fs.writeFileSync(path.resolve('output.docx'), buf);
+    // fs.writeFileSync(path.resolve('output.docx'), buf);
+    return Buffer.from(buf).toString('hex');
   }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
