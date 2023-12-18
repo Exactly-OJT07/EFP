@@ -32,10 +32,10 @@ export class Project extends AbstractEntity {
   specification: string;
 
   @Column('json', { nullable: false })
-  langFrame: { name: string }[];
+  langFrame: string[];
 
   @Column('json', { nullable: false })
-  technology: { name: string }[];
+  technology: string[];
 
   @Column({
     type: 'enum',

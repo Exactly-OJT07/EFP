@@ -33,11 +33,9 @@ export class CreateEmployeeDto {
 
   description: string;
 
-  langFrame: { name: string }[];
+  langFrame: { name: string; exp: number }[];
 
-  tech: { name: string }[];
-
-  skills: { name: string; exp: number }[];
+  tech: { name: string; exp: number }[];
 
   @IsNotEmpty()
   status: StatusEnum;
