@@ -50,10 +50,7 @@ export class EmployeeService {
       technical:
         employee.tech
           ?.map(function (item) {
-            return (
-              (item.name as unknown as string).charAt(0).toUpperCase() +
-              (item.name as unknown as string).slice(1)
-            );
+            return item.name.charAt(0).toUpperCase() + item.name.slice(1);
           })
           .join(', ') ?? '',
       projects: employee.employee_project.map((item) => {

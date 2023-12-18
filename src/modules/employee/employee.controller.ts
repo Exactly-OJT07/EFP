@@ -1,23 +1,32 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
   Query,
+  ValidationPipe,
 } from '@nestjs/common';
-import { EmployeeService } from './employee.service';
+import { MailService } from '../mail/mail.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { GetEmployeeParams } from './dto/getList_employee.dto';
-import { ValidationPipe } from '@nestjs/common';
 import { GetManagers } from './dto/getManager.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { EmployeeService } from './employee.service';
 
 @Controller('employee')
 export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) {}
+  constructor(
+    private readonly employeeService: EmployeeService,
+    private readonly mailService: MailService,
+  ) {}
+
+  @Get('testmail')
+  async test() {
+    return await this.mailService.sendFaildCv();
+  }
 
   @Post()
   async create(
