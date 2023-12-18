@@ -6,7 +6,11 @@ import path from 'path';
 import PizZip from 'pizzip';
 import { PageMetaDto } from 'src/common/dtos/pageMeta';
 import { ResponsePaginate } from 'src/common/dtos/responsePaginate';
-import { Order, getFormattedPosition } from 'src/common/enum/enums';
+import {
+  Order,
+  PositionEnum,
+  getFormattedPosition,
+} from 'src/common/enum/enums';
 import { Employee } from 'src/entities/employee.entity';
 import { EmployeeProject } from 'src/entities/employee_project.entity';
 import { Project } from 'src/entities/project.entity';
@@ -30,6 +34,9 @@ export class EmployeeService {
 
   async generateCv(id: string) {
     const { employee } = await this.getEmployeeById(id);
+    function getFormattedRoles(roles: PositionEnum[]): string {
+      return roles.map((role) => getFormattedPosition(role)).join(', ');
+    }
     const dataDocx = {
       name: employee.name,
       address: employee.address,
@@ -59,38 +66,29 @@ export class EmployeeService {
       projects: employee.employee_project.map((item) => {
         return {
           project_name: item.project.name,
-          role: item.roles
-            .map(
-              (item) =>
-                item.charAt(0).toUpperCase() + item.slice(1).toLowerCase(),
-            )
-            .join(', '),
+          role: getFormattedRoles(item.roles),
           description: item.project.description,
           specification: item.project.specification,
           lang_frame_project:
             item.project.langFrame
-              .map(
-                (item) =>
-                  (item.name as unknown as string)?.charAt(0).toUpperCase() +
-                  (item.name as unknown as string)?.slice(1),
-              )
+              .map((item) => item?.charAt(0).toUpperCase() + item?.slice(1))
               .join(', ') ?? '',
           tech_project:
             item.project.technology
-              .map(
-                (item) =>
-                  (item.name as unknown as string)?.charAt(0).toUpperCase() +
-                  (item.name as unknown as string)?.slice(1),
-              )
+              .map((item) => item?.charAt(0).toUpperCase() + item?.slice(1))
               .join(', ') ?? '',
         };
       }),
-      skills: employee.skills.map((item) => {
-        return {
+      skills: [
+        ...employee.langFrame.map((item) => ({
           name: item.name,
           exp: item.exp,
-        };
-      }),
+        })),
+        ...employee.tech.map((item) => ({
+          name: item.name,
+          exp: item.exp,
+        })),
+      ],
     };
 
     const content = fs.readFileSync(path.resolve('template2.docx'), 'binary');
@@ -172,6 +170,24 @@ export class EmployeeService {
           currentMonth: new Date().getMonth() + 1,
         })
         .getCount();
+    } else if (period === 'count_join') {
+      const currentYear = new Date().getFullYear();
+      const joinCounts = {};
+
+      for (let month = 0; month < 12; month++) {
+        const count = await this.employeesRepository
+          .createQueryBuilder('employee')
+          .where('EXTRACT(YEAR FROM employee.joinDate) = :year', {
+            year: currentYear,
+          })
+          .andWhere('EXTRACT(MONTH FROM employee.joinDate) = :month', {
+            month: month + 1,
+          })
+          .getCount();
+
+        joinCounts[month + 1] = count;
+      }
+      return joinCounts;
     }
 
     const percentageChange =
@@ -324,7 +340,8 @@ export class EmployeeService {
       employee.position = updateEmployeeDto.position;
       employee.description = updateEmployeeDto.description;
       employee.status = updateEmployeeDto.status;
-      employee.skills = updateEmployeeDto.skills;
+      employee.langFrame = updateEmployeeDto.langFrame;
+      employee.tech = updateEmployeeDto.tech;
       employee.avatar = updateEmployeeDto.avatar;
       employee.joinDate = updateEmployeeDto.joinDate;
       employee.managerId = updateEmployeeDto.managerId;
