@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Docxtemplater from 'docxtemplater';
@@ -286,44 +287,67 @@ export class EmployeeService {
   }
 
   async getEmployeeById(id: string) {
+    const managerProjects = await this.entityManager
+      .getRepository(Project)
+      .createQueryBuilder('project')
+      .select([
+        'project.id',
+        'project.name',
+        'project.startDate',
+        'project.endDate',
+      ])
+      .where('project.managerId = :id', { id })
+      .getMany();
+
+    const managerTracking = managerProjects.map((project) => ({
+      projectName: project.name,
+      joinDate: project.startDate,
+      doneDate: project.endDate,
+      role: 'manager',
+    }));
+
+    const employeeProjects = await this.entityManager
+      .getRepository(EmployeeProject)
+      .createQueryBuilder('employee_project')
+      .select([
+        'employee_project.roles',
+        'employee_project.joinDate',
+        'employee_project.fireDate',
+        'project.id',
+        'project.name',
+        'project.startDate',
+        'project.endDate',
+      ])
+      .leftJoin('employee_project.project', 'project')
+      .where('employee_project.employeeId = :id', { id })
+      .withDeleted()
+      .getMany();
+
+    const otherRolesTracking = employeeProjects.map((employeeProject) => ({
+      projectName: employeeProject.project.name,
+      joinDate: employeeProject.joinDate,
+      doneDate: employeeProject.fireDate || employeeProject.project.endDate,
+      role: employeeProject.roles,
+    }));
+    const projects = [...managerTracking, ...otherRolesTracking];
     const employee = await this.employeesRepository
       .createQueryBuilder('employee')
-      .select([
-        'employee',
-        'manager.name',
-        'manager.code',
-        'manager.email',
-        'manager.phone',
-      ])
-      .leftJoin('employee.manager', 'manager')
       .leftJoinAndSelect('employee.employee_project', 'employee_project')
       .leftJoinAndSelect('employee_project.project', 'project')
       .where('employee.id = :id', { id })
       .getOne();
 
     if (employee) {
-      const employeeProjectsWithDeletedAt = await this.entityManager
-        .getRepository(EmployeeProject)
-        .createQueryBuilder('employee_project')
-        .leftJoin('employee_project.employee', 'employee')
-        .leftJoinAndSelect('employee_project.project', 'project')
-        .where('employee.id = :id', { id })
-        .withDeleted()
-        .getMany();
-
-      const tracking = employeeProjectsWithDeletedAt.map(
-        (employeeProject: EmployeeProject) => ({
-          projectName: employeeProject.project.name,
-          projectStartDate: employeeProject.project.startDate,
-          joinDate: employeeProject.joinDate,
-          doneDate: employeeProject.deletedAt,
-          projectEndDate: employeeProject.project.endDate,
-        }),
+      const managerTracking = projects.filter(
+        (item) => item.role === 'manager',
+      );
+      const otherRolesTracking = projects.filter(
+        (item) => item.role !== 'manager',
       );
 
       employee.tracking = {
         joinDate: employee.joinDate,
-        projects: tracking,
+        projects,
         fireDate: employee.deletedAt,
       };
     }
@@ -350,6 +374,33 @@ export class EmployeeService {
     }
   }
   async remove(id: string) {
+    const employee = await this.employeesRepository
+      .createQueryBuilder('employee')
+      .leftJoinAndSelect('employee.employee_project', 'employee_project')
+      .where('employee.id = :id', { id })
+      .getOne();
+
+    if (!employee) {
+      return { message: 'Employee not found' };
+    }
+
+    const isManager = await this.employeesRepository
+      .createQueryBuilder('employee')
+      .leftJoin('employee.project', 'project')
+      .where('employee.id = :id', { id })
+      .andWhere('project.managerId = :id', { id })
+      .getCount();
+
+    if (isManager > 0) {
+      return {
+        message: 'Employee is a manager of a project. Cannot delete.',
+      };
+    }
+
+    if (employee.employee_project.length > 0) {
+      return { message: 'Employee is in a project. Cannot delete.' };
+    }
+
     await this.employeesRepository.softDelete(id);
     return { message: 'Employee deletion successful' };
   }
