@@ -71,19 +71,11 @@ export class EmployeeService {
           specification: item.project.specification,
           lang_frame_project:
             item.project.langFrame
-              .map(
-                (item) =>
-                  (item as unknown as string)?.charAt(0).toUpperCase() +
-                  (item as unknown as string)?.slice(1),
-              )
+              .map((item) => item?.charAt(0).toUpperCase() + item?.slice(1))
               .join(', ') ?? '',
           tech_project:
             item.project.technology
-              .map(
-                (item) =>
-                  (item as unknown as string)?.charAt(0).toUpperCase() +
-                  (item as unknown as string)?.slice(1),
-              )
+              .map((item) => item?.charAt(0).toUpperCase() + item?.slice(1))
               .join(', ') ?? '',
         };
       }),
