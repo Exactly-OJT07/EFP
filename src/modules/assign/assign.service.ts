@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAssignDto } from './dto/create-assign.dto';
-import { UpdateAssignDto } from './dto/update-assign.dto';
-import { EmployeeProject } from 'src/entities/employee_project.entity';
-import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GetAssignParams } from './dto/getList-assign.dto';
-import { Order } from 'src/common/enum/enums';
 import { PageMetaDto } from 'src/common/dtos/pageMeta';
 import { ResponsePaginate } from 'src/common/dtos/responsePaginate';
+import { Order } from 'src/common/enum/enums';
+import { EmployeeProject } from 'src/entities/employee_project.entity';
+import { EntityManager, Repository } from 'typeorm';
+import { CreateAssignDto } from './dto/create-assign.dto';
+import { GetAssignParams } from './dto/getList-assign.dto';
+import { UpdateAssignDto } from './dto/update-assign.dto';
 
 @Injectable()
 export class AssignService {
@@ -17,20 +17,25 @@ export class AssignService {
     private readonly entityManager: EntityManager,
   ) {}
 
-  async assignEmployeeToProject(assignDto: CreateAssignDto) {
-    const { employeeId, projectId, roles, joinDate } = assignDto;
+  async assignEmployeeToProject(assignDtos: CreateAssignDto[]) {
+    // const { employeeId, projectId, roles, joinDate } = assignDto;
+    console.log(assignDtos);
+    const results = [];
+    for (const assignDto of assignDtos) {
+      const { employeeId, projectId, roles, joinDate } = assignDto;
+      const employeeProject = new EmployeeProject(assignDto);
+      employeeProject.employeeId = employeeId;
+      employeeProject.projectId = projectId;
+      employeeProject.roles = roles;
+      employeeProject.joinDate = joinDate;
+      await this.entityManager.save(employeeProject);
+      results.push({
+        employeeProject,
+        message: `Successfully assigned employee ${employeeId} to project ${projectId}`,
+      });
+    }
 
-    const employeeProject = new EmployeeProject(assignDto);
-    employeeProject.employeeId = employeeId;
-    employeeProject.projectId = projectId;
-    employeeProject.roles = roles;
-    employeeProject.joinDate = joinDate;
-
-    await this.entityManager.save(employeeProject);
-    return {
-      employeeProject,
-      message: 'Successfully assign employee into project ',
-    };
+    return results;
   }
 
   async getAssigns(params: GetAssignParams) {
@@ -75,8 +80,25 @@ export class AssignService {
     await this.entityManager.save(project);
   }
 
-  async remove(id: string) {
-    await this.assignRespository.softDelete(id);
-    return { data: null, message: 'Successfully delete assign' };
+  async remove(data: any) {
+    const { employeeIds, projectId } = data;
+    const deleteResult = await this.assignRespository
+      .createQueryBuilder()
+      .delete()
+      .from(EmployeeProject)
+      .where('projectId = :projectId AND employeeId IN (:...employeeIds)', {
+        projectId,
+        employeeIds,
+      })
+      .execute();
+
+    if (deleteResult.affected === 0) {
+      throw new Error('Failed to unassign employee from project');
+    }
+
+    return {
+      data: null,
+      message: 'Successfully unassigned employee from project',
+    };
   }
 }

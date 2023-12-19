@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { EntityManager, Repository } from 'typeorm';
-import { Project } from '../../entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GetProjectParams } from './dto/getList-project.dto';
-import { Order, StatusProjectEnum } from 'src/common/enum/enums';
 import { PageMetaDto } from 'src/common/dtos/pageMeta';
 import { ResponsePaginate } from 'src/common/dtos/responsePaginate';
+import { Order, StatusProjectEnum } from 'src/common/enum/enums';
 import { Employee } from 'src/entities/employee.entity';
 import { EmployeeProject } from 'src/entities/employee_project.entity';
+import { EntityManager, Repository } from 'typeorm';
+import { Project } from '../../entities/project.entity';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { GetProjectParams } from './dto/getList-project.dto';
+import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Injectable()
 export class ProjectService {
@@ -18,6 +18,8 @@ export class ProjectService {
     private projectRespository: Repository<Project>,
     @InjectRepository(Employee)
     private employeeRespository: Repository<Employee>,
+    @InjectRepository(EmployeeProject)
+    private assignRespository: Repository<EmployeeProject>,
     private readonly entityManager: EntityManager,
   ) {}
 
@@ -357,6 +359,7 @@ export class ProjectService {
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {
     const project = await this.projectRespository.findOneBy({ id });
+
     project.name = updateProjectDto.name;
     project.managerId = updateProjectDto.managerId;
     project.description = updateProjectDto.description;
@@ -366,6 +369,23 @@ export class ProjectService {
     project.technology = updateProjectDto.technology;
     project.startDate = updateProjectDto.startDate;
     project.endDate = updateProjectDto.endDate;
+
+    if (updateProjectDto.employeeRoles) {
+      for (const employeeId in updateProjectDto.employeeRoles) {
+        const employeeProject = await this.assignRespository.findOne({
+          where: { projectId: id, employeeId },
+        });
+        if (employeeProject) {
+          employeeProject.roles = updateProjectDto.employeeRoles[
+            employeeId
+          ] as any;
+          console.log(employeeProject);
+          await this.entityManager.save(employeeProject);
+        } else {
+        }
+      }
+    }
+
     await this.entityManager.save(project);
     return { project, message: 'Successfully update project' };
   }

@@ -1,24 +1,24 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import { AssignService } from './assign.service';
 import { CreateAssignDto } from './dto/create-assign.dto';
-import { UpdateAssignDto } from './dto/update-assign.dto';
 import { GetAssignParams } from './dto/getList-assign.dto';
+import { UpdateAssignDto } from './dto/update-assign.dto';
 
 @Controller('assign')
 export class AssignController {
   constructor(private readonly assignService: AssignService) {}
 
   @Post()
-  create(@Body() createAssignDto: CreateAssignDto) {
+  create(@Body() createAssignDto: CreateAssignDto[]) {
     return this.assignService.assignEmployeeToProject(createAssignDto);
   }
 
@@ -37,8 +37,8 @@ export class AssignController {
     return this.assignService.update(id, updateAssignDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.assignService.remove(id);
+  @Delete()
+  remove(@Body() data: any) {
+    return this.assignService.remove(data);
   }
 }

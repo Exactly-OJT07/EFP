@@ -1,19 +1,22 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
   Query,
+  Res,
+  ValidationPipe,
 } from '@nestjs/common';
-import { EmployeeService } from './employee.service';
+import { Response } from 'express';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { GetEmployeeParams } from './dto/getList_employee.dto';
-import { ValidationPipe } from '@nestjs/common';
 import { GetManagers } from './dto/getManager.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { EmployeeService } from './employee.service';
 
 @Controller('employee')
 export class EmployeeController {
@@ -27,9 +30,25 @@ export class EmployeeController {
     return { result, message: 'Successfully create new employee' };
   }
 
+  @Get('noPaginate')
+  noPaginate() {
+    return this.employeeService.getEmployeeNoPaginate();
+  }
+
   @Post('cv')
-  generateCv(@Body('id') id: string) {
-    return this.employeeService.generateCv(id);
+  async generateCv(@Body('id') id: string, @Res() res: Response) {
+    try {
+      const docxBuffer = await this.employeeService.generateCv(id);
+      res.setHeader(
+        'Content-Type',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      );
+      res.setHeader('Content-Disposition', 'attachment; filename=your_cv.docx');
+      res.status(HttpStatus.OK).send(docxBuffer);
+    } catch (error) {
+      console.error('Error generating CV:', error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error generating CV');
+    }
   }
 
   @Get('total')

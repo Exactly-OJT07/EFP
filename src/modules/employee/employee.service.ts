@@ -98,11 +98,14 @@ export class EmployeeService {
       linebreaks: true,
     });
     doc.render(dataDocx);
+
     const buf = doc.getZip().generate({
       type: 'nodebuffer',
+      platform: 'win32',
       compression: 'DEFLATE',
     });
-    fs.writeFileSync(path.resolve('output.docx'), buf);
+
+    return Buffer.from(buf).toString('hex');
   }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
@@ -194,6 +197,10 @@ export class EmployeeService {
       oldCount === 0 ? 100 : ((currentCount - oldCount) / oldCount) * 100;
 
     return { oldCount, currentCount, total, percentageChange };
+  }
+
+  async getEmployeeNoPaginate() {
+    return await this.employeesRepository.find();
   }
 
   async getEmployees(params: GetEmployeeParams) {
