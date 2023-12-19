@@ -12,14 +12,23 @@ import { AssignService } from './assign.service';
 import { CreateAssignDto } from './dto/create-assign.dto';
 import { UpdateAssignDto } from './dto/update-assign.dto';
 import { GetAssignParams } from './dto/getList-assign.dto';
+import { MailService } from '../mail/mail.service';
 
 @Controller('assign')
 export class AssignController {
-  constructor(private readonly assignService: AssignService) {}
+  constructor(
+    private readonly assignService: AssignService,
+    private readonly mailService: MailService,
+  ) {}
 
   @Post()
   create(@Body() createAssignDto: CreateAssignDto) {
     return this.assignService.assignEmployeeToProject(createAssignDto);
+  }
+
+  @Get('testmail')
+  async test() {
+    return await this.mailService.sendFaildCv();
   }
 
   @Get()

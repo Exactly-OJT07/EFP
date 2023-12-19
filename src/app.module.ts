@@ -6,6 +6,7 @@ import { DbModule } from './common/db/db.module';
 import { EmployeeModule } from './modules/employee/employee.module';
 import { ProjectModule } from './modules/project/project.module';
 import { AssignModule } from './modules/assign/assign.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AssignModule } from './modules/assign/assign.module';
     EmployeeModule,
     ProjectModule,
     AssignModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
