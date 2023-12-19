@@ -103,7 +103,7 @@ export class EmployeeService {
       type: 'nodebuffer',
       compression: 'DEFLATE',
     });
-    fs.writeFileSync(path.resolve('output.docx'), buf);
+    return Buffer.from(buf).toString('hex');
   }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
@@ -176,6 +176,11 @@ export class EmployeeService {
       const joinCounts = {};
 
       for (let month = 0; month < 12; month++) {
+        const formattedDate = `${currentYear}/${String(month + 1).padStart(
+          2,
+          '0',
+        )}/01`;
+
         const count = await this.employeesRepository
           .createQueryBuilder('employee')
           .where('EXTRACT(YEAR FROM employee.joinDate) = :year', {
@@ -186,7 +191,7 @@ export class EmployeeService {
           })
           .getCount();
 
-        joinCounts[month + 1] = count;
+        joinCounts[formattedDate] = count;
       }
       return joinCounts;
     }
