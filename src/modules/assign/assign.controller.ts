@@ -26,11 +26,6 @@ export class AssignController {
     return this.assignService.assignEmployeeToProject(createAssignDto);
   }
 
-  @Get('testmail')
-  async test() {
-    return await this.mailService.sendFaildCv();
-  }
-
   @Get()
   findAll(@Query() params: GetAssignParams) {
     return this.assignService.getAssigns(params);

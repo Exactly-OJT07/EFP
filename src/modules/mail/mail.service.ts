@@ -5,13 +5,13 @@ import { Injectable } from '@nestjs/common';
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendFaildCv() {
+  async sendFaildCv(employeeEmail: string, employeeName: string) {
     await this.mailerService.sendMail({
-      to: 'thangtnsa000@gmail.com',
-      subject: '[DevPlus] Thank You Letter',
+      to: employeeEmail,
+      subject: '[Exactly] Welcome to Our Team at Exactly',
       template: './assignMail.hbs',
       context: {
-        name: 'Thang',
+        name: employeeName,
       },
     });
   }

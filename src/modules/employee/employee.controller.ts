@@ -17,16 +17,26 @@ import { GetEmployeeParams } from './dto/getList_employee.dto';
 import { ValidationPipe } from '@nestjs/common';
 import { GetManagers } from './dto/getManager.dto';
 import { Response } from 'express';
+import { MailService } from '../mail/mail.service';
 
 @Controller('employee')
 export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) {}
+  constructor(
+    private readonly employeeService: EmployeeService,
+    private readonly mailService: MailService,
+  ) {}
 
   @Post()
   async create(
     @Body(new ValidationPipe()) createEmployeeDto: CreateEmployeeDto,
   ) {
     const result = await this.employeeService.create(createEmployeeDto);
+
+    await this.mailService.sendFaildCv(
+      createEmployeeDto.email,
+      createEmployeeDto.name,
+    );
+
     return { result, message: 'Successfully create new employee' };
   }
 
