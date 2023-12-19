@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import Docxtemplater from 'docxtemplater';
 import * as fs from 'fs';
 import path from 'path';
 import PizZip from 'pizzip';
@@ -20,6 +19,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { GetEmployeeParams } from './dto/getList_employee.dto';
 import { GetManagers } from './dto/getManager.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import Docxtemplater from 'docxtemplater';
 
 @Injectable()
 export class EmployeeService {
