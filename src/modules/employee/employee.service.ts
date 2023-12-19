@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import Docxtemplater from 'docxtemplater';
 import * as fs from 'fs';
 import path from 'path';
 import PizZip from 'pizzip';
@@ -20,6 +19,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { GetEmployeeParams } from './dto/getList_employee.dto';
 import { GetManagers } from './dto/getManager.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import Docxtemplater from 'docxtemplater';
 
 @Injectable()
 export class EmployeeService {
@@ -378,35 +378,34 @@ export class EmployeeService {
       return { employee, message: 'Successfully update employee' };
     }
   }
+
   async remove(id: string) {
     const employee = await this.employeesRepository
       .createQueryBuilder('employee')
       .leftJoinAndSelect('employee.employee_project', 'employee_project')
       .where('employee.id = :id', { id })
       .getOne();
-
     if (!employee) {
       return { message: 'Employee not found' };
     }
-
     const isManager = await this.employeesRepository
       .createQueryBuilder('employee')
-      .leftJoin('employee.project', 'project')
+      .leftJoinAndSelect('employee.project', 'project')
       .where('employee.id = :id', { id })
       .andWhere('project.managerId = :id', { id })
       .getCount();
-
     if (isManager > 0) {
       return {
+        data: null,
         message: 'Employee is a manager of a project. Cannot delete.',
       };
     }
-
     if (employee.employee_project.length > 0) {
-      return { message: 'Employee is in a project. Cannot delete.' };
+      for (const empProject of employee.employee_project) {
+        await this.entityManager.remove(empProject);
+      }
     }
-
     await this.employeesRepository.softDelete(id);
-    return { message: 'Employee deletion successful' };
+    return { data: null, message: 'Employee deletion successful' };
   }
 }
