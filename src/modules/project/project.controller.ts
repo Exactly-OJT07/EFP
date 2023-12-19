@@ -55,7 +55,12 @@ export class ProjectController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projectService.remove(id);
+  async remove(@Param('id') id: string) {
+    const result = await this.projectService.remove(id);
+    if (result.message) {
+      return { message: result.message };
+    } else {
+      return { data: result.data, message: 'Success' };
+    }
   }
 }
