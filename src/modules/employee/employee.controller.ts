@@ -89,6 +89,11 @@ export class EmployeeController {
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    await this.employeeService.remove(id);
+    const result = await this.employeeService.remove(id);
+    if (result.message) {
+      return { message: result.message };
+    } else {
+      return { data: result.data, message: 'Success' };
+    }
   }
 }
