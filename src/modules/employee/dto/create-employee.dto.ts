@@ -37,6 +37,8 @@ export class CreateEmployeeDto {
 
   tech: { name: string; exp: number }[];
 
+  skills: { name: string; exp: number }[];
+
   @IsNotEmpty()
   status: StatusEnum;
 

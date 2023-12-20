@@ -20,6 +20,10 @@ export class UpdateEmployeeDto {
 
   tech: { name: string; exp: number }[];
 
+  skills: { name: string; exp: number }[];
+
+  identityCard: string;
+
   status: StatusEnum;
 
   avatar: string;

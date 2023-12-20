@@ -14,6 +14,8 @@ export class GetEmployeeParams extends PageOptionsDto {
   status: StatusEnum;
   position: PositionEnum;
   skills: { name: string; exp: number }[];
+  langFrame: { name: string; exp: number }[];
+  tech: { name: string; exp: number }[];
   isManager: boolean;
   description: string;
   joinDate: Date;
