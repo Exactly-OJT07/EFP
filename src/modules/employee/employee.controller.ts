@@ -26,6 +26,11 @@ export class EmployeeController {
     private readonly mailService: MailService,
   ) {}
 
+  @Get('noPaginate')
+  noPaginate() {
+    return this.employeeService.getEmployeeNoPaginate();
+  }
+
   @Post()
   async create(
     @Body(new ValidationPipe()) createEmployeeDto: CreateEmployeeDto,
