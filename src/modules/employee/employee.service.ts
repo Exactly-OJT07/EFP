@@ -367,14 +367,18 @@ export class EmployeeService {
       employee.phone = updateEmployeeDto.phone;
       employee.address = updateEmployeeDto.address;
       employee.gender = updateEmployeeDto.gender;
+      employee.identityCard = updateEmployeeDto.identityCard;
+      employee.dateOfBirth = updateEmployeeDto.dateOfBirth;
       employee.position = updateEmployeeDto.position;
       employee.description = updateEmployeeDto.description;
       employee.status = updateEmployeeDto.status;
       employee.langFrame = updateEmployeeDto.langFrame;
       employee.tech = updateEmployeeDto.tech;
+      employee.skills = updateEmployeeDto.skills;
       employee.avatar = updateEmployeeDto.avatar;
       employee.joinDate = updateEmployeeDto.joinDate;
       employee.managerId = updateEmployeeDto.managerId;
+      employee.isManager = updateEmployeeDto.isManager;
       await this.entityManager.save(employee);
       return { employee, message: 'Successfully update employee' };
     }
