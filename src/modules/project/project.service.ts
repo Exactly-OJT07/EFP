@@ -18,6 +18,8 @@ export class ProjectService {
     private projectRespository: Repository<Project>,
     @InjectRepository(Employee)
     private employeeRespository: Repository<Employee>,
+    @InjectRepository(EmployeeProject)
+    private assignRespository: Repository<EmployeeProject>,
     private readonly entityManager: EntityManager,
   ) {}
 
@@ -357,6 +359,9 @@ export class ProjectService {
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {
     const project = await this.projectRespository.findOneBy({ id });
+
+    console.log(updateProjectDto);
+    console.log(project);
     project.name = updateProjectDto.name;
     project.managerId = updateProjectDto.managerId;
     project.description = updateProjectDto.description;
@@ -366,6 +371,21 @@ export class ProjectService {
     project.technology = updateProjectDto.technology;
     project.startDate = updateProjectDto.startDate;
     project.endDate = updateProjectDto.endDate;
+    if (updateProjectDto.employeeRoles) {
+      for (const employeeId in updateProjectDto.employeeRoles) {
+        const employeeProject = await this.assignRespository.findOne({
+          where: { projectId: id, employeeId },
+        });
+        if (employeeProject) {
+          employeeProject.roles = updateProjectDto.employeeRoles[
+            employeeId
+          ] as any;
+          console.log(employeeProject);
+          await this.entityManager.save(employeeProject);
+        } else {
+        }
+      }
+    }
     await this.entityManager.save(project);
     return { project, message: 'Successfully update project' };
   }

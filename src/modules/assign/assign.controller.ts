@@ -22,7 +22,7 @@ export class AssignController {
   ) {}
 
   @Post()
-  create(@Body() createAssignDto: CreateAssignDto) {
+  create(@Body() createAssignDto: CreateAssignDto[]) {
     return this.assignService.assignEmployeeToProject(createAssignDto);
   }
 
@@ -41,8 +41,8 @@ export class AssignController {
     return this.assignService.update(id, updateAssignDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.assignService.remove(id);
+  @Delete()
+  remove(@Body() data: any) {
+    return this.assignService.remove(data);
   }
 }

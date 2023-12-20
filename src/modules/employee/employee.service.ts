@@ -105,7 +105,9 @@ export class EmployeeService {
     });
     return Buffer.from(buf).toString('hex');
   }
-
+  async getEmployeeNoPaginate() {
+    return await this.employeesRepository.find();
+  }
   async create(createEmployeeDto: CreateEmployeeDto) {
     const existingEmployee = await this.employeesRepository.findOne({
       where: [
