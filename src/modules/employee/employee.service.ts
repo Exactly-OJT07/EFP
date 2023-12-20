@@ -365,6 +365,7 @@ export class EmployeeService {
       employee.name = updateEmployeeDto.name;
       employee.email = updateEmployeeDto.email;
       employee.phone = updateEmployeeDto.phone;
+      employee.address = updateEmployeeDto.address;
       employee.gender = updateEmployeeDto.gender;
       employee.position = updateEmployeeDto.position;
       employee.description = updateEmployeeDto.description;

@@ -29,4 +29,6 @@ export class UpdateEmployeeDto {
   fireDate: Date;
 
   managerId: number;
+
+  address: string;
 }

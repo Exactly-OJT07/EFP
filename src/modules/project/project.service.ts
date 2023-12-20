@@ -371,7 +371,20 @@ export class ProjectService {
   }
 
   async remove(id: string) {
+    const project = await this.projectRespository
+      .createQueryBuilder('project')
+      .leftJoinAndSelect('project.employee_project', 'employee_project')
+      .where('project.id = :id', { id })
+      .getOne();
+    if (!project) {
+      return { message: 'Project not found' };
+    }
+    if (project.employee_project.length > 0) {
+      for (const empProject of project.employee_project) {
+        await this.entityManager.remove(empProject);
+      }
+    }
     await this.projectRespository.softDelete(id);
-    return { message: 'Project deletion successful' };
+    return { data: null, message: 'Employee deletion successful' };
   }
 }
